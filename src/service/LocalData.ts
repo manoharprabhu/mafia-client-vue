@@ -1,6 +1,7 @@
 export class LocalData {
   private static instance: LocalData
   public static readonly PLAYERID: string = "playerId"
+  public static readonly LOBBYID: string = "lobbyId"
 
   public static getInstance(): LocalData {
     if (!LocalData.instance) {

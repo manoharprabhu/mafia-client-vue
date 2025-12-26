@@ -9,7 +9,7 @@
     </div>
     <br />
     <div>
-      <button>Join a game</button>
+      <button @click="$router.push('/joingame')">Join a game</button>
     </div>
   </main>
 </template>

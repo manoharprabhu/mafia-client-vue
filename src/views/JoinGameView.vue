@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import { RestClient } from '@/service/RestClient.ts'
 import { LocalData } from '@/service/LocalData.ts'
 import { useRouter } from 'vue-router'
 
-const name = ref('')
-const isDisabled = ref(false)
-const errorMessage = ref('')
+const name = ref<string>('')
+const lobbyId = ref<string>('')
+const errorMessage = ref<string>('')
+const isDisabled = ref<boolean>(false)
 const router = useRouter()
 
-async function create() {
+async function join() {
+  isDisabled.value = true
   try {
-    isDisabled.value = true
-    const response = await RestClient.getInstance().createGame(name.value)
+    const response = await RestClient.getInstance().joinGame(lobbyId.value, name.value)
     if (!response.success) {
       errorMessage.value = response.message
       return
     }
     const playerId = response.data.playerId
-    const lobbyId = response.data.lobbyId
     LocalData.getInstance().setData(LocalData.PLAYERID, playerId)
-    LocalData.getInstance().setData(LocalData.LOBBYID, lobbyId)
+    LocalData.getInstance().setData(LocalData.LOBBYID, lobbyId.value)
     await router.push('/lobby')
   } catch (error: any) {
     errorMessage.value = error.message
@@ -28,21 +28,22 @@ async function create() {
     isDisabled.value = false
   }
 }
-
-onMounted(() => {})
 </script>
 
 <template>
   <main>
     <header>
-      <h1>Create a game</h1>
+      <h1>Join a game</h1>
     </header>
     <div>
       <input v-model="name" type="text" placeholder="Enter your name" />
     </div>
+    <div>
+      <input v-model="lobbyId" type="text" placeholder="Enter the lobby ID" />
+    </div>
     <br />
     <div>
-      <button :disabled="isDisabled" @click="create">Create</button>
+      <button :disabled="isDisabled" @click="join">Join</button>
     </div>
     <div>
       <label style="color: red">{{ errorMessage }}</label>
