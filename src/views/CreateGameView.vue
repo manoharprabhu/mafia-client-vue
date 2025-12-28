@@ -7,11 +7,14 @@ import { useRouter } from 'vue-router'
 const name = ref('')
 const isDisabled = ref(false)
 const errorMessage = ref('')
+const ip = ref('http://localhost:8080')
 const router = useRouter()
 
 async function create() {
   try {
     isDisabled.value = true
+    LocalData.getInstance().setData(LocalData.IP, ip.value)
+    RestClient.overrideHost(ip.value)
     const response = await RestClient.getInstance().createGame(name.value)
     if (!response.success) {
       errorMessage.value = response.message
@@ -37,6 +40,9 @@ onMounted(() => {})
     <header>
       <h1>Create a game</h1>
     </header>
+    <div>
+      <input v-model="ip" type="text" placeholder="Server IP address and port" />
+    </div>
     <div>
       <input v-model="name" type="text" placeholder="Enter your name" />
     </div>

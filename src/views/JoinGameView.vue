@@ -8,9 +8,12 @@ const name = ref<string>('')
 const lobbyId = ref<string>('')
 const errorMessage = ref<string>('')
 const isDisabled = ref<boolean>(false)
+const ip = ref('http://localhost:8080')
 const router = useRouter()
 
 async function join() {
+  LocalData.getInstance().setData(LocalData.IP, ip.value)
+  RestClient.overrideHost(ip.value)
   isDisabled.value = true
   try {
     const response = await RestClient.getInstance().joinGame(lobbyId.value, name.value)
@@ -35,6 +38,9 @@ async function join() {
     <header>
       <h1>Join a game</h1>
     </header>
+    <div>
+      <input v-model="ip" type="text" placeholder="Server IP address and port" />
+    </div>
     <div>
       <input v-model="name" type="text" placeholder="Enter your name" />
     </div>

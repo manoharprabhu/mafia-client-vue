@@ -1,20 +1,32 @@
 import axios, { Axios } from 'axios'
+import { LocalData } from '@/service/LocalData.ts'
 export class RestClient {
-  private static instance: RestClient
-  private root: string = 'http://localhost:8080'
+  private static instance: RestClient | null = null
+  private static root: string = 'http://localhost:8080'
   private client: Axios | undefined
+
+  public static overrideHost(host: string) {
+    RestClient.root = host
+    RestClient.instance = null
+    // refresh
+    RestClient.getInstance()
+  }
 
   public static getInstance() {
     if (RestClient.instance) {
       return RestClient.instance
     }
 
+    const storedIp = LocalData.getInstance().getData<string>(LocalData.IP)
+    if(storedIp !== null) {
+      RestClient.root = storedIp
+    }
+
     RestClient.instance = new RestClient()
     RestClient.instance.client = axios.create({
-      baseURL: RestClient.instance.root,
+      baseURL: RestClient.root,
       headers: {
         'Content-Type': 'application/json',
-        'X-Custom-Header': 'foobar',
       },
     })
 
@@ -23,7 +35,7 @@ export class RestClient {
 
   public async createGame(playerName: string): Promise<HTTPResponse<CreateGameResponse>> {
     const request = await this.client?.post<HTTPResponse<CreateGameResponse>>(
-      `${this.root}/lobby/create`,
+      `${RestClient.root}/lobby/create`,
       {
         playerName,
       },
@@ -44,7 +56,7 @@ export class RestClient {
 
   public async joinGame(lobbyId: String, playerName: String): Promise<HTTPResponse<JoinGameResponse>> {
     const request = await this.client?.post<HTTPResponse<JoinGameResponse>>(
-      `${this.root}/lobby/join`,
+      `${RestClient.root}/lobby/join`,
       {
         playerName,
         lobbyId
@@ -66,7 +78,7 @@ export class RestClient {
 
   public async getLobby(lobbyId: string, playerId: string): Promise<HTTPResponse<GetLobbyResponse>> {
     const request = await this.client?.post<HTTPResponse<GetLobbyResponse>>(
-      `${this.root}/lobby/get`,
+      `${RestClient.root}/lobby/get`,
       {
         lobbyId,
         playerId,
@@ -103,7 +115,7 @@ export type JoinGameResponse = {
 }
 
 export type GetLobbyResponse = {
-  players: [
-    { playerId: string, playerName: string }
-  ]
+  lobbyCreatorId: string
+  currentPhase: string
+  players: [{ playerId: string; playerName: string }]
 }
