@@ -18,7 +18,7 @@ export class RestClient {
     }
 
     const storedIp = LocalData.getInstance().getData<string>(LocalData.IP)
-    if(storedIp !== null) {
+    if (storedIp !== null) {
       RestClient.root = storedIp
     }
 
@@ -41,25 +41,53 @@ export class RestClient {
       },
     )
 
-    if(!request) {
+    if (!request) {
       console.log('Error creating game')
-      return Promise.reject("Error creating game")
+      return Promise.reject('Error creating game')
     }
 
     if (request.status !== 200) {
       console.log('Error creating game, non 200 status')
-      return Promise.reject("Error creating game, non 200 status")
+      return Promise.reject('Error creating game, non 200 status')
     }
 
     return request.data
   }
 
-  public async joinGame(lobbyId: String, playerName: String): Promise<HTTPResponse<JoinGameResponse>> {
+  public async startGame(
+    lobbyId: string,
+    playerId: string,
+  ): Promise<HTTPResponse<StartGameResponse>> {
+    const request = await this.client?.post<HTTPResponse<StartGameResponse>>(
+      `${RestClient.root}/game/start`,
+      {
+        lobbyId,
+        playerId,
+      },
+    )
+
+    if (!request) {
+      console.log('Error creating game')
+      return Promise.reject('Error creating game')
+    }
+
+    if (request.status !== 200) {
+      console.log('Error creating game, non 200 status')
+      return Promise.reject('Error creating game, non 200 status')
+    }
+
+    return request.data
+  }
+
+  public async joinGame(
+    lobbyId: String,
+    playerName: String,
+  ): Promise<HTTPResponse<JoinGameResponse>> {
     const request = await this.client?.post<HTTPResponse<JoinGameResponse>>(
       `${RestClient.root}/lobby/join`,
       {
         playerName,
-        lobbyId
+        lobbyId,
       },
     )
 
@@ -76,9 +104,37 @@ export class RestClient {
     return request.data
   }
 
-  public async getLobby(lobbyId: string, playerId: string): Promise<HTTPResponse<GetLobbyResponse>> {
+  public async getLobby(
+    lobbyId: string,
+    playerId: string,
+  ): Promise<HTTPResponse<GetLobbyResponse>> {
     const request = await this.client?.post<HTTPResponse<GetLobbyResponse>>(
       `${RestClient.root}/lobby/get`,
+      {
+        lobbyId,
+        playerId,
+      },
+    )
+
+    if (!request) {
+      console.log('Error getting lobby')
+      return Promise.reject('Error getting lobby')
+    }
+
+    if (request.status !== 200) {
+      console.log('Error getting lobby, non 200 status')
+      return Promise.reject('Error getting lobby, non 200 status')
+    }
+
+    return request.data
+  }
+
+  public async getGameState(
+    lobbyId: string,
+    playerId: string,
+  ): Promise<HTTPResponse<GetGameResponse>> {
+    const request = await this.client?.post<HTTPResponse<GetGameResponse>>(
+      `${RestClient.root}/game/state`,
       {
         lobbyId,
         playerId,
@@ -118,4 +174,32 @@ export type GetLobbyResponse = {
   lobbyCreatorId: string
   currentPhase: string
   players: [{ playerId: string; playerName: string }]
+}
+
+export type StartGameResponse = {
+  status: string
+}
+
+export type GetGameResponse = {
+  phase:
+    | 'WAITING_FOR_PLAYERS'
+    | 'START'
+    | 'NIGHT'
+    | 'RESOLVE_NIGHT'
+    | 'DAY_DISCUSSION'
+    | 'DAY_VOTING'
+    | 'RESOLVE_DAY'
+  dayNumber: number
+  timeRemainingSeconds: number
+  you: {
+    playerId: string
+    name: string
+    role: 'VILLAGER' | 'MAFIA' | 'DOCTOR' | 'POLICE' | 'FOOL' | 'HEADHUNTER'
+    alive: boolean
+  }
+  players: [{ playerId: string; name: string; alive: boolean }]
+  messages: [{ timestamp: number; message: string }]
+  gameResult: string
+  voteMap: { [key: string]: string }
+  visibleRoles: { [key: string]: 'VILLAGER' | 'MAFIA' | 'DOCTOR' | 'POLICE' | 'FOOL' | 'HEADHUNTER' }
 }

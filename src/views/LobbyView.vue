@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { RestClient } from '@/service/RestClient.ts'
 import { LocalData } from '@/service/LocalData.ts'
+import { useRouter } from 'vue-router'
 type Player = {
   playerId: string
   playerName: string
@@ -13,6 +14,7 @@ const playerId = ref<string>('')
 const canStartGame = ref<boolean>(false)
 const isNotCreator = ref<boolean>(true)
 let refreshHandle: number
+const router = useRouter()
 
 onUnmounted(async () => {
   clearInterval(refreshHandle)
@@ -36,16 +38,20 @@ async function refreshList() {
       canStartGame.value = true
     }
     isNotCreator.value = playerId.value !== response.data.lobbyCreatorId
-    if(response.data.currentPhase !== 'WAITING_FOR_PLAYERS') {
-      // goto game view here
+    if (response.data.currentPhase !== 'WAITING_FOR_PLAYERS') {
+      await router.push('/gamescreen')
     }
   } catch (error) {
     console.error(error)
   }
 }
 
-function startGame() {
-
+async function startGame() {
+  const lId = LocalData.getInstance().getData<string>(LocalData.LOBBYID)!
+  const pId = LocalData.getInstance().getData<string>(LocalData.PLAYERID)!
+  var response = await RestClient.getInstance().startGame(lId, pId)
+  //todo - check if success, then move to game screen
+  await router.push('/gamescreen')
 }
 </script>
 <template>

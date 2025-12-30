@@ -3,6 +3,7 @@ import HomeView from '@/views/HomeView.vue'
 import CreateGameView from '@/views/CreateGameView.vue'
 import LobbyView from '@/views/LobbyView.vue'
 import JoinGameView from '@/views/JoinGameView.vue'
+import GameScreenView from '@/views/GameScreenView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -26,6 +27,11 @@ const router = createRouter({
       name: 'lobby',
       component: LobbyView,
     },
+    {
+      path: '/gamescreen',
+      name: 'gamescreen',
+      component: GameScreenView,
+    }
   ],
 })
 
