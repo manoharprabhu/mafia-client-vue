@@ -15,6 +15,9 @@ const canStartGame = ref<boolean>(false)
 const isNotCreator = ref<boolean>(true)
 let refreshHandle: number
 const router = useRouter()
+import Card from 'primevue/card'
+import Divider from 'primevue/divider';
+import Button from 'primevue/button';
 
 onUnmounted(async () => {
   clearInterval(refreshHandle)
@@ -60,15 +63,24 @@ async function startGame() {
   </header>
   <main>
     <div>
-      Players waiting in the lobby: <span style="font-size: 1.5rem">{{ lobbyId }}</span>
+      Lobby ID: <span style="font-size: 1.5rem">{{ lobbyId }}</span>
     </div>
     <br />
-    <div v-for="item in players" :key="item.playerId">
-      {{ item.playerName }}
-      <span style="font-weight: bold" :hidden="item.playerId !== playerId">(YOU)</span>
-    </div>
+    <Card>
+      <template #title>Players</template>
+      <template #content>
+        <p>
+          <div v-for="item in players" :key="item.playerId">
+            {{ item.playerName }}
+            <span style="font-weight: bold" :hidden="item.playerId !== playerId">(YOU)</span>
+            <Divider />
+          </div>
+        </p>
+      </template>
+    </Card>
+    <Divider />
     <div :hidden="isNotCreator">
-      <button :disabled="!canStartGame" @click="startGame">Start the game</button>
+      <Button :disabled="!canStartGame" @click="startGame">Start the game</Button>
       <span style="font-size: 0.6em">(Requires atleast 10 players)</span>
     </div>
   </main>

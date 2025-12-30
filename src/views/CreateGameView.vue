@@ -3,6 +3,10 @@ import { onMounted, ref } from 'vue'
 import { RestClient } from '@/service/RestClient.ts'
 import { LocalData } from '@/service/LocalData.ts'
 import { useRouter } from 'vue-router'
+import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
+import Message from 'primevue/message'
+import IftaLabel from 'primevue/iftalabel'
 
 const name = ref('')
 const isDisabled = ref(false)
@@ -41,17 +45,25 @@ onMounted(() => {})
       <h1>Create a game</h1>
     </header>
     <div>
-      <input v-model="ip" type="text" placeholder="Server IP address and port" />
-    </div>
-    <div>
-      <input v-model="name" type="text" placeholder="Enter your name" />
+      <IftaLabel>
+        <InputText id="ip" v-model="ip" type="text" />
+        <label for="ip">Server IP address and port</label>
+      </IftaLabel>
     </div>
     <br />
     <div>
-      <button :disabled="isDisabled" @click="create">Create</button>
+      <IftaLabel>
+        <InputText id="name" v-model="name" type="text" />
+        <label for="name">Your name</label>
+      </IftaLabel>
     </div>
+    <br />
     <div>
-      <label style="color: red">{{ errorMessage }}</label>
+      <Button :disabled="isDisabled" @click="create">Create</Button>
+    </div>
+    <br />
+    <div :hidden="errorMessage === ''">
+      <Message severity="error">{{ errorMessage }}</Message>
     </div>
   </main>
 </template>

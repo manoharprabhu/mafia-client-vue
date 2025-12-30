@@ -3,6 +3,10 @@ import { ref } from 'vue'
 import { RestClient } from '@/service/RestClient.ts'
 import { LocalData } from '@/service/LocalData.ts'
 import { useRouter } from 'vue-router'
+import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
+import Message from 'primevue/message'
+import IftaLabel from 'primevue/iftalabel'
 
 const name = ref<string>('')
 const lobbyId = ref<string>('')
@@ -39,20 +43,31 @@ async function join() {
       <h1>Join a game</h1>
     </header>
     <div>
-      <input v-model="ip" type="text" placeholder="Server IP address and port" />
-    </div>
-    <div>
-      <input v-model="name" type="text" placeholder="Enter your name" />
-    </div>
-    <div>
-      <input v-model="lobbyId" type="text" placeholder="Enter the lobby ID" />
+      <IftaLabel>
+        <InputText id="ip" v-model="ip" type="text" />
+        <label for="ip">Server IP address and port</label>
+      </IftaLabel>
     </div>
     <br />
     <div>
-      <button :disabled="isDisabled" @click="join">Join</button>
+      <IftaLabel>
+        <InputText id="name" v-model="name" type="text" />
+        <label for="name">Your name</label>
+      </IftaLabel>
     </div>
+    <br />
     <div>
-      <label style="color: red">{{ errorMessage }}</label>
+      <IftaLabel>
+        <InputText id="lobbyId" v-model="lobbyId" type="text" />
+        <label for="lobbyId">Lobby ID</label>
+      </IftaLabel>
+    </div>
+    <br />
+    <div>
+      <Button :disabled="isDisabled" @click="join">Join</Button>
+    </div>
+    <div :hidden="errorMessage === ''">
+      <Message severity="error">{{ errorMessage }}</Message>
     </div>
   </main>
 </template>

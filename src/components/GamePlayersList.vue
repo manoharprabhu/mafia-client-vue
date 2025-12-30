@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Tag from 'primevue/tag'
+
 defineProps<{
   yourId: string | undefined
   players: [{ playerId: string; name: string; alive: boolean }] | undefined
@@ -8,13 +10,7 @@ defineProps<{
 <template>
   <div v-for="item in players" :key="item.playerId">
     <span :class="{ 'strikethrough-text': !item.alive }">{{ item.name }}</span>
-    <span style="font-weight: bold" :hidden="item.playerId !== yourId">(YOU)</span>
-    <span style="font-weight: bold" :hidden="item.alive">(DEAD)</span>
+    <span :hidden="item.playerId !== yourId"><Tag severity="success" value="YOU"></Tag></span>
+    <span :hidden="item.alive"><Tag severity="danger" value="DEAD"></Tag></span>
   </div>
 </template>
-
-<style scoped>
-.strikethrough-text {
-  text-decoration: line-through;
-}
-</style>
