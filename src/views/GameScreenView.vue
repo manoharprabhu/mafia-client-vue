@@ -2,6 +2,9 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { type GetGameResponse, RestClient } from '@/service/RestClient.ts'
 import { LocalData } from '@/service/LocalData.ts'
+import PhaseText from '@/components/PhaseText.vue'
+import TimerText from '@/components/TimerText.vue'
+import GamePlayersList from '@/components/GamePlayersList.vue'
 
 const gameState = ref<GetGameResponse>()
 let timerHandle: number
@@ -10,7 +13,7 @@ onMounted(() => {
     const playerId = LocalData.getInstance().getData<string>(LocalData.PLAYERID)!
     const lobbyId = LocalData.getInstance().getData<string>(LocalData.LOBBYID)!
     const response = await RestClient.getInstance().getGameState(lobbyId, playerId)
-    if(response.success) {
+    if (response.success) {
       gameState.value = response.data
     }
   })
@@ -19,7 +22,6 @@ onMounted(() => {
 onUnmounted(() => {
   clearInterval(timerHandle)
 })
-
 </script>
 
 <template>
@@ -28,8 +30,11 @@ onUnmounted(() => {
       <h1>Game</h1>
     </header>
     <div>
-      <div>{{gameState?.phase}}</div>
-      <div>Time remaining: {{gameState?.timeRemainingSeconds}}</div>
+      <div><PhaseText :phase="gameState?.phase" /></div>
+      <div><TimerText :time="gameState?.timeRemainingSeconds" /></div>
+      <div>
+        <GamePlayersList :your-id="gameState?.you.playerId" :players="gameState?.players" />
+      </div>
     </div>
   </main>
 </template>
