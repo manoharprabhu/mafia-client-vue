@@ -25,6 +25,18 @@ const props = defineProps<{
   voteMap: { [key: string]: string } | undefined
 }>()
 
+function amIAlive(playerId: string | undefined) {
+  if (props.players === undefined) {
+    return ''
+  }
+  for (let i = 0; i < props.players?.length; i++) {
+    if (props.players[i]?.playerId === playerId) {
+      return props.players[i]?.alive
+    }
+  }
+  return false
+}
+
 function getNameById(playerId: string | undefined): string {
   if (props.players === undefined) {
     return ''
@@ -52,10 +64,13 @@ async function voteDay(sourcePlayerID: string, targetPlayerID: string) {
       <div v-if="visibleRoles !== undefined && visibleRoles[item.playerId] === 'MAFIA'">
         <Tag severity="warn" value="MAFIA" />
       </div>
-      <div v-if="phase === 'DAY_VOTING' && item.alive && item.playerId !== yourId">
+      <div v-if="amIAlive(yourId) && phase === 'DAY_VOTING' && item.alive && item.playerId !== yourId">
         <Button @click="voteDay(yourId!, item.playerId)">Vote</Button>
       </div>
-      <div v-if="voteMap !== undefined && voteMap[item.playerId] !== undefined" class="vote-performed">
+      <div
+        v-if="voteMap !== undefined && voteMap[item.playerId] !== undefined"
+        class="vote-performed"
+      >
         <div>I'm voting {{ getNameById(voteMap[item.playerId]) }}</div>
       </div>
       <div v-if="voteMap !== undefined && Object.keys(voteMap).length > 0" class="vote-received">
@@ -93,6 +108,6 @@ async function voteDay(sourcePlayerID: string, targetPlayerID: string) {
   font-weight: bold;
 }
 .vote-received {
-  font-size: 0.8em
+  font-size: 0.8em;
 }
 </style>
