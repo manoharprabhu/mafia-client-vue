@@ -40,6 +40,7 @@ onUnmounted(() => {
           :players="gameState?.players"
           :visibleRoles="gameState?.visibleRoles"
           :phase="gameState?.phase"
+          :voteMap="gameState?.voteMap"
         />
       </div>
     </div>

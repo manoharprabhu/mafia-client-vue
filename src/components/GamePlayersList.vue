@@ -3,8 +3,9 @@ import Tag from 'primevue/tag'
 import Button from 'primevue/button'
 import { LocalData } from '@/service/LocalData.ts'
 import { RestClient } from '@/service/RestClient.ts'
+import { ref } from 'vue'
 
-defineProps<{
+const props = defineProps<{
   yourId: string | undefined
   players: [{ playerId: string; name: string; alive: boolean }] | undefined
   visibleRoles:
@@ -21,7 +22,20 @@ defineProps<{
     | 'DAY_VOTING'
     | 'RESOLVE_DAY'
     | undefined
+  voteMap: { [key: string]: string } | undefined
 }>()
+
+function getNameById(playerId: string | undefined): string {
+  if (props.players === undefined) {
+    return ''
+  }
+  for (let i = 0; i < props.players?.length; i++) {
+    if (props.players[i]?.playerId === playerId) {
+      return props.players[i]?.name!
+    }
+  }
+  return ''
+}
 
 async function voteDay(sourcePlayerID: string, targetPlayerID: string) {
   const lobbyId = LocalData.getInstance().getData<string>(LocalData.LOBBYID)!
@@ -41,6 +55,12 @@ async function voteDay(sourcePlayerID: string, targetPlayerID: string) {
       <div v-if="phase === 'DAY_VOTING' && item.alive && item.playerId !== yourId">
         <Button @click="voteDay(yourId!, item.playerId)">Vote</Button>
       </div>
+      <div v-if="voteMap !== undefined && voteMap[item.playerId] !== undefined" class="vote-performed">
+        <div>I'm voting {{ getNameById(voteMap[item.playerId]) }}</div>
+      </div>
+      <div v-if="voteMap !== undefined && Object.keys(voteMap).length > 0" class="vote-received">
+        {{ Object.values(voteMap).filter((x) => x === item.playerId).length }} votes received
+      </div>
     </div>
   </div>
 </template>
@@ -51,7 +71,10 @@ async function voteDay(sourcePlayerID: string, targetPlayerID: string) {
   grid-template-rows: repeat(4, 1fr);
   gap: 1rem;
   width: 100%;
-  max-width: 500px;
+  max-width: 800px;
+  min-width: 800px;
+  max-height: 800px;
+  min-height: 800px;
   margin: auto;
 }
 
@@ -64,5 +87,12 @@ async function voteDay(sourcePlayerID: string, targetPlayerID: string) {
 }
 .strikethrough-text {
   text-decoration: line-through;
+}
+.vote-performed {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+.vote-received {
+  font-size: 0.8em
 }
 </style>
