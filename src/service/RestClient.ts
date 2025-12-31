@@ -153,6 +153,35 @@ export class RestClient {
 
     return request.data
   }
+
+  public async votePlayer(
+    lobbyId: string,
+    playerId: string,
+    targetPlayerId: string,
+    type: 'villager' | 'mafia'
+  ): Promise<HTTPResponse<VotePlayerResponse>> {
+    const request = await this.client?.post<HTTPResponse<VotePlayerResponse>>(
+      `${RestClient.root}/game/vote`,
+      {
+        lobbyId,
+        playerId,
+        targetPlayerId,
+        type
+      },
+    )
+
+    if (!request) {
+      console.log('Error getting lobby')
+      return Promise.reject('Error getting lobby')
+    }
+
+    if (request.status !== 200) {
+      console.log('Error getting lobby, non 200 status')
+      return Promise.reject('Error getting lobby, non 200 status')
+    }
+
+    return request.data
+  }
 }
 
 export type HTTPResponse<T> = {
@@ -174,6 +203,10 @@ export type GetLobbyResponse = {
   lobbyCreatorId: string
   currentPhase: string
   players: [{ playerId: string; playerName: string }]
+}
+
+export type VotePlayerResponse = {
+  success: boolean
 }
 
 export type StartGameResponse = {

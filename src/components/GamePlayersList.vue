@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import Tag from 'primevue/tag'
+import Button from 'primevue/button'
+import { LocalData } from '@/service/LocalData.ts'
+import { RestClient } from '@/service/RestClient.ts'
 
 defineProps<{
   yourId: string | undefined
@@ -9,7 +12,21 @@ defineProps<{
         [key: string]: 'VILLAGER' | 'MAFIA' | 'DOCTOR' | 'POLICE' | 'FOOL' | 'HEADHUNTER'
       }
     | undefined
+  phase:
+    | 'WAITING_FOR_PLAYERS'
+    | 'START'
+    | 'NIGHT'
+    | 'RESOLVE_NIGHT'
+    | 'DAY_DISCUSSION'
+    | 'DAY_VOTING'
+    | 'RESOLVE_DAY'
+    | undefined
 }>()
+
+async function voteDay(sourcePlayerID: string, targetPlayerID: string) {
+  const lobbyId = LocalData.getInstance().getData<string>(LocalData.LOBBYID)!
+  await RestClient.getInstance().votePlayer(lobbyId, sourcePlayerID, targetPlayerID, 'villager')
+}
 </script>
 
 <template>
@@ -20,6 +37,9 @@ defineProps<{
       <div :hidden="item.alive"><Tag severity="danger" value="DEAD" /></div>
       <div v-if="visibleRoles !== undefined && visibleRoles[item.playerId] === 'MAFIA'">
         <Tag severity="warn" value="MAFIA" />
+      </div>
+      <div v-if="phase === 'DAY_VOTING' && item.alive && item.playerId !== yourId">
+        <Button @click="voteDay(yourId!, item.playerId)">Vote</Button>
       </div>
     </div>
   </div>

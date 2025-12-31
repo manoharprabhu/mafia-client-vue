@@ -39,6 +39,7 @@ onUnmounted(() => {
           :your-id="gameState?.you.playerId"
           :players="gameState?.players"
           :visibleRoles="gameState?.visibleRoles"
+          :phase="gameState?.phase"
         />
       </div>
     </div>
