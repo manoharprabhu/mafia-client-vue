@@ -35,7 +35,11 @@ onUnmounted(() => {
       <div><TimerText :time="gameState?.timeRemainingSeconds" /></div>
       <div><RoleText :role="gameState?.you.role" /></div>
       <div>
-        <GamePlayersList :your-id="gameState?.you.playerId" :players="gameState?.players" />
+        <GamePlayersList
+          :your-id="gameState?.you.playerId"
+          :players="gameState?.players"
+          :visibleRoles="gameState?.visibleRoles"
+        />
       </div>
     </div>
   </main>
