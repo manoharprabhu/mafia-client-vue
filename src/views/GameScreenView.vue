@@ -16,7 +16,7 @@ onMounted(() => {
     if (response.success) {
       gameState.value = response.data
     }
-  })
+  }, 1000)
 })
 
 onUnmounted(() => {
