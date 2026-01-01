@@ -7,17 +7,7 @@ defineProps<{
 </script>
 
 <template>
-  <Panel>
-    <main>
-      <div v-if="time === undefined">-</div>
-      <div v-if="time !== undefined" class="time">{{ time }}</div>
-    </main>
-  </Panel>
-  <br />
+  <span v-if="time === undefined">-</span>
+  <span v-if="time !== undefined">{{ time }}</span>
 </template>
-<style scoped>
-.time {
-  font-size: 2em;
-  font-weight: bold;
-}
-</style>
+<style scoped></style>

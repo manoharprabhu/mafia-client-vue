@@ -52,8 +52,7 @@ function formatMsToHHMMsss(timestamp: number) {
 <template>
   <main>
     <div>
-      <div><PhaseText :phase="gameState?.phase" /></div>
-      <div><TimerText :time="gameState?.timeRemainingSeconds" /></div>
+      <div><PhaseText :gameState="gameState" /></div>
       <div><RoleText :role="gameState?.you.role" /></div>
       <div>
         <GamePlayersList

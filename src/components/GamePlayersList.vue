@@ -22,12 +22,14 @@ const props = defineProps<{
     | 'RESOLVE_DAY'
     | undefined
   voteMap: { [key: string]: string } | undefined
-  you: {
-    playerId: string
-    name: string
-    role: 'VILLAGER' | 'MAFIA' | 'DOCTOR' | 'POLICE' | 'FOOL' | 'HEADHUNTER'
-    alive: boolean
-  } | undefined
+  you:
+    | {
+        playerId: string
+        name: string
+        role: 'VILLAGER' | 'MAFIA' | 'DOCTOR' | 'POLICE' | 'FOOL' | 'HEADHUNTER'
+        alive: boolean
+      }
+    | undefined
 }>()
 
 function getNameById(playerId: string | undefined): string {
@@ -56,8 +58,12 @@ async function voteNight(sourcePlayerID: string, targetPlayerID: string) {
 <template>
   <div class="grid-container">
     <div v-for="item in players" :key="item.playerId" class="grid-item">
-      <span :class="{ 'strikethrough-text': !item.alive, }" style="font-size: 2.5em">{{ item.name }}</span>
-      <div :hidden="item.playerId !== you?.playerId"><Tag severity="success" value="YOU"></Tag></div>
+      <span :class="{ 'strikethrough-text': !item.alive }" style="font-size: 2.5em">{{
+        item.name
+      }}</span>
+      <div :hidden="item.playerId !== you?.playerId">
+        <Tag severity="success" value="YOU"></Tag>
+      </div>
       <div :hidden="item.alive"><Tag severity="danger" value="DEAD" /></div>
       <div v-if="visibleRoles !== undefined && visibleRoles[item.playerId] === 'MAFIA'">
         <Tag severity="warn" value="MAFIA" />
@@ -78,7 +84,18 @@ async function voteNight(sourcePlayerID: string, targetPlayerID: string) {
           visibleRoles[item.playerId] !== 'MAFIA'
         "
       >
-        <Button @click="voteNight(you.playerId, item.playerId)">Vote</Button>
+        <Button @click="voteNight(you.playerId, item.playerId)" severity="danger">Vote</Button>
+      </div>
+      <div v-if="
+      you?.alive &&
+      phase === 'NIGHT' &&
+      you?.role === 'DOCTOR' &&
+      item.alive &&
+      item.playerId !== you.playerId
+        "
+      >
+        <!--If you are doctor, show on all players who are alive-->
+        <Button severity="info">Protect</Button>
       </div>
       <div
         v-if="voteMap !== undefined && voteMap[item.playerId] !== undefined"

@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import Panel from 'primevue/panel'
 import { computed } from 'vue'
+import TimerText from '@/components/TimerText.vue'
+import type { GetGameResponse } from '@/service/RestClient.ts'
 
 const props = defineProps<{
-  phase: string | undefined
+  gameState: GetGameResponse | undefined
 }>()
 
 const panelStyle = computed(() => {
-  switch (props.phase) {
+  switch (props.gameState?.phase) {
     case 'WAITING_FOR_PLAYERS':
       return {
         backgroundColor: '#f5f5f5',
@@ -52,14 +54,15 @@ const panelStyle = computed(() => {
 <template>
   <Panel :style="panelStyle">
     <div class="phase">
-      <div v-if="phase === undefined">-</div>
-      <div v-if="phase === 'WAITING_FOR_PLAYERS'">Waiting for players to join</div>
-      <div v-if="phase === 'START'">Assigning roles</div>
-      <div v-if="phase === 'NIGHT'">Night</div>
-      <div v-if="phase === 'RESOLVE_NIGHT'">Night</div>
-      <div v-if="phase === 'DAY_DISCUSSION'">Day</div>
-      <div v-if="phase === 'DAY_VOTING'">Vote someone out of the village</div>
-      <div v-if="phase === 'RESOLVE_DAY'">Vote someone out of the village</div>
+      <span v-if="gameState === undefined">-</span>
+      <span v-if="gameState?.phase === 'WAITING_FOR_PLAYERS'">Waiting for players to join</span>
+      <span v-if="gameState?.phase === 'START'">Assigning roles</span>
+      <span v-if="gameState?.phase === 'NIGHT'">Night</span>
+      <span v-if="gameState?.phase === 'RESOLVE_NIGHT'">Night</span>
+      <span v-if="gameState?.phase === 'DAY_DISCUSSION'">Day</span>
+      <span v-if="gameState?.phase === 'DAY_VOTING'">Day - Vote someone out of the village</span>
+      <span v-if="gameState?.phase === 'RESOLVE_DAY'">Day - Vote someone out of the village</span>
+      (<TimerText :time="gameState?.timeRemainingSeconds" /> seconds left)
     </div>
   </Panel>
   <br />
