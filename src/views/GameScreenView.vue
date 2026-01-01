@@ -27,9 +27,6 @@ onUnmounted(() => {
 
 <template>
   <main>
-    <header>
-      <h1>Game</h1>
-    </header>
     <div>
       <div><PhaseText :phase="gameState?.phase" /></div>
       <div><TimerText :time="gameState?.timeRemainingSeconds" /></div>
@@ -40,7 +37,7 @@ onUnmounted(() => {
           :visibleRoles="gameState?.visibleRoles"
           :phase="gameState?.phase"
           :voteMap="gameState?.voteMap"
-          :you="gameState?.you"
+          :you="gameState?.you!"
         />
       </div>
     </div>

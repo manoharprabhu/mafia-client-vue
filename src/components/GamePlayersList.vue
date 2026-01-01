@@ -56,7 +56,7 @@ async function voteNight(sourcePlayerID: string, targetPlayerID: string) {
 <template>
   <div class="grid-container">
     <div v-for="item in players" :key="item.playerId" class="grid-item">
-      <span :class="{ 'strikethrough-text': !item.alive }">{{ item.name }}</span>
+      <span :class="{ 'strikethrough-text': !item.alive, }" style="font-size: 2.5em">{{ item.name }}</span>
       <div :hidden="item.playerId !== you.playerId"><Tag severity="success" value="YOU"></Tag></div>
       <div :hidden="item.alive"><Tag severity="danger" value="DEAD" /></div>
       <div v-if="visibleRoles !== undefined && visibleRoles[item.playerId] === 'MAFIA'">
