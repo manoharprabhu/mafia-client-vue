@@ -6,7 +6,6 @@ import { RestClient } from '@/service/RestClient.ts'
 import { ref } from 'vue'
 
 const props = defineProps<{
-  yourId: string | undefined
   players: [{ playerId: string; name: string; alive: boolean }] | undefined
   visibleRoles:
     | {
@@ -23,19 +22,13 @@ const props = defineProps<{
     | 'RESOLVE_DAY'
     | undefined
   voteMap: { [key: string]: string } | undefined
+  you: {
+    playerId: string
+    name: string
+    role: 'VILLAGER' | 'MAFIA' | 'DOCTOR' | 'POLICE' | 'FOOL' | 'HEADHUNTER'
+    alive: boolean
+  }
 }>()
-
-function amIAlive(playerId: string | undefined) {
-  if (props.players === undefined) {
-    return ''
-  }
-  for (let i = 0; i < props.players?.length; i++) {
-    if (props.players[i]?.playerId === playerId) {
-      return props.players[i]?.alive
-    }
-  }
-  return false
-}
 
 function getNameById(playerId: string | undefined): string {
   if (props.players === undefined) {
@@ -53,19 +46,39 @@ async function voteDay(sourcePlayerID: string, targetPlayerID: string) {
   const lobbyId = LocalData.getInstance().getData<string>(LocalData.LOBBYID)!
   await RestClient.getInstance().votePlayer(lobbyId, sourcePlayerID, targetPlayerID, 'villager')
 }
+
+async function voteNight(sourcePlayerID: string, targetPlayerID: string) {
+  const lobbyId = LocalData.getInstance().getData<string>(LocalData.LOBBYID)!
+  await RestClient.getInstance().votePlayer(lobbyId, sourcePlayerID, targetPlayerID, 'mafia')
+}
 </script>
 
 <template>
   <div class="grid-container">
     <div v-for="item in players" :key="item.playerId" class="grid-item">
       <span :class="{ 'strikethrough-text': !item.alive }">{{ item.name }}</span>
-      <div :hidden="item.playerId !== yourId"><Tag severity="success" value="YOU"></Tag></div>
+      <div :hidden="item.playerId !== you.playerId"><Tag severity="success" value="YOU"></Tag></div>
       <div :hidden="item.alive"><Tag severity="danger" value="DEAD" /></div>
       <div v-if="visibleRoles !== undefined && visibleRoles[item.playerId] === 'MAFIA'">
         <Tag severity="warn" value="MAFIA" />
       </div>
-      <div v-if="amIAlive(yourId) && phase === 'DAY_VOTING' && item.alive && item.playerId !== yourId">
-        <Button @click="voteDay(yourId!, item.playerId)">Vote</Button>
+      <div
+        v-if="you.alive && phase === 'DAY_VOTING' && item.alive && item.playerId !== you.playerId"
+      >
+        <Button @click="voteDay(you.playerId, item.playerId)">Vote</Button>
+      </div>
+      <div
+        v-if="
+          you.alive &&
+          phase === 'NIGHT' &&
+          you.role === 'MAFIA' &&
+          item.alive &&
+          item.playerId !== you.playerId &&
+          visibleRoles !== undefined &&
+          visibleRoles[item.playerId] !== 'MAFIA'
+        "
+      >
+        <Button @click="voteNight(you.playerId, item.playerId)">Vote</Button>
       </div>
       <div
         v-if="voteMap !== undefined && voteMap[item.playerId] !== undefined"
