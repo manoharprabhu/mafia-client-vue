@@ -253,6 +253,7 @@ export type GetGameResponse = {
     | 'DAY_DISCUSSION'
     | 'DAY_VOTING'
     | 'RESOLVE_DAY'
+    | 'WIN'
   dayNumber: number
   timeRemainingSeconds: number
   you: {
@@ -270,4 +271,5 @@ export type GetGameResponse = {
   }
   inspectionResults: [{ playerId: string; roleOrientation: 'GOOD' | 'BAD' | 'UNKNOWN' }]
   yourHeadhunterTarget: string | undefined
+  winner: 'VILLAGERS_WIN' | 'MAFIA_WIN' | 'HEADHUNTER_WIN' | 'FOOL_WIN' | 'NONE' | undefined
 }

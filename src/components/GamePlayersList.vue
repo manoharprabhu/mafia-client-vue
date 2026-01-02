@@ -20,6 +20,7 @@ const props = defineProps<{
     | 'DAY_DISCUSSION'
     | 'DAY_VOTING'
     | 'RESOLVE_DAY'
+    | 'WIN'
     | undefined
   voteMap: { [key: string]: string } | undefined
   you:
