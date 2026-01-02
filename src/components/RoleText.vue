@@ -18,7 +18,7 @@ defineProps<{
       </div>
       <div v-if="role === 'POLICE'">
         Your role is Police. You can inspect anyone's role at night. It will be revealed as either
-        Good or Bad
+        Good, Bad or Unknown. Mafia are bad, fool and headhunter are unknown, villagers, police and doctor are good.
       </div>
       <div v-if="role === 'FOOL'">
         Your role is Fool. You win if you get voted and killed by the villagers during the day

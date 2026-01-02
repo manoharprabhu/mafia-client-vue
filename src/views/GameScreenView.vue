@@ -60,6 +60,7 @@ function formatMsToHHMMsss(timestamp: number) {
           :visibleRoles="gameState?.visibleRoles"
           :phase="gameState?.phase"
           :voteMap="gameState?.voteMap"
+          :inspectionResults="gameState?.inspectionResults"
           :you="gameState?.you!"
         />
       </div>

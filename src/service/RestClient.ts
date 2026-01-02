@@ -158,7 +158,7 @@ export class RestClient {
     lobbyId: string,
     playerId: string,
     targetPlayerId: string,
-    type: 'villager' | 'mafia' | 'doctor'
+    type: 'villager' | 'mafia' | 'doctor',
   ): Promise<HTTPResponse<VotePlayerResponse>> {
     const request = await this.client?.post<HTTPResponse<VotePlayerResponse>>(
       `${RestClient.root}/game/vote`,
@@ -166,7 +166,34 @@ export class RestClient {
         lobbyId,
         playerId,
         targetPlayerId,
-        type
+        type,
+      },
+    )
+
+    if (!request) {
+      console.log('Error getting lobby')
+      return Promise.reject('Error getting lobby')
+    }
+
+    if (request.status !== 200) {
+      console.log('Error getting lobby, non 200 status')
+      return Promise.reject('Error getting lobby, non 200 status')
+    }
+
+    return request.data
+  }
+
+  public async policeInspect(
+    lobbyId: string,
+    playerId: string,
+    targetPlayerId: string
+  ): Promise<HTTPResponse<PoliceInspectResponse>> {
+    const request = await this.client?.post<HTTPResponse<PoliceInspectResponse>>(
+      `${RestClient.root}/game/police/inspect`,
+      {
+        lobbyId,
+        playerId,
+        targetPlayerId,
       },
     )
 
@@ -213,6 +240,10 @@ export type StartGameResponse = {
   status: string
 }
 
+export type PoliceInspectResponse = {
+  success: boolean
+}
+
 export type GetGameResponse = {
   phase:
     | 'WAITING_FOR_PLAYERS'
@@ -235,4 +266,5 @@ export type GetGameResponse = {
   gameResult: string
   voteMap: { [key: string]: string }
   visibleRoles: { [key: string]: 'VILLAGER' | 'MAFIA' | 'DOCTOR' | 'POLICE' | 'FOOL' | 'HEADHUNTER' }
+  inspectionResults: [{ playerId: string, roleOrientation: 'GOOD' | 'BAD' | 'UNKNOWN' }]
 }

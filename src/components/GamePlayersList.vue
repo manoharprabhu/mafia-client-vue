@@ -30,6 +30,7 @@ const props = defineProps<{
         alive: boolean
       }
     | undefined
+  inspectionResults: [{ playerId: string; roleOrientation: 'GOOD' | 'BAD' | 'UNKNOWN' }] | undefined
 }>()
 
 function getNameById(playerId: string | undefined): string {
@@ -58,6 +59,11 @@ async function voteNightDoctor(sourcePlayerID: string, targetPlayerID: string) {
   const lobbyId = LocalData.getInstance().getData<string>(LocalData.LOBBYID)!
   await RestClient.getInstance().votePlayer(lobbyId, sourcePlayerID, targetPlayerID, 'doctor')
 }
+
+async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
+  const lobbyId = LocalData.getInstance().getData<string>(LocalData.LOBBYID)!
+  await RestClient.getInstance().policeInspect(lobbyId, sourcePlayerID, targetPlayerID)
+}
 </script>
 
 <template>
@@ -72,6 +78,16 @@ async function voteNightDoctor(sourcePlayerID: string, targetPlayerID: string) {
       <div :hidden="item.alive"><Tag severity="danger" value="DEAD" /></div>
       <div v-if="visibleRoles !== undefined && visibleRoles[item.playerId] === 'MAFIA'">
         <Tag severity="warn" value="MAFIA" />
+      </div>
+      <div
+        v-if="
+          inspectionResults !== undefined &&
+          inspectionResults.find((v) => v.playerId === item.playerId) !== undefined
+        "
+      >
+        <Tag severity="info">{{
+          inspectionResults.find((v) => v.playerId === item.playerId)?.roleOrientation
+        }}</Tag>
       </div>
       <div
         v-if="you?.alive && phase === 'DAY_VOTING' && item.alive && item.playerId !== you?.playerId"
@@ -102,6 +118,19 @@ async function voteNightDoctor(sourcePlayerID: string, targetPlayerID: string) {
       >
         <Button @click="voteNightDoctor(you.playerId, item.playerId)" severity="info"
           >Protect</Button
+        >
+      </div>
+      <div
+        v-if="
+          you?.alive &&
+          phase === 'NIGHT' &&
+          you?.role === 'POLICE' &&
+          item.alive &&
+          item.playerId !== you.playerId
+        "
+      >
+        <Button @click="policeInspect(you.playerId, item.playerId)" severity="help"
+          >Inspect player</Button
         >
       </div>
       <div
