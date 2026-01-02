@@ -265,6 +265,9 @@ export type GetGameResponse = {
   messages: [{ timestamp: number; message: string }]
   gameResult: string
   voteMap: { [key: string]: string }
-  visibleRoles: { [key: string]: 'VILLAGER' | 'MAFIA' | 'DOCTOR' | 'POLICE' | 'FOOL' | 'HEADHUNTER' }
-  inspectionResults: [{ playerId: string, roleOrientation: 'GOOD' | 'BAD' | 'UNKNOWN' }]
+  visibleRoles: {
+    [key: string]: 'VILLAGER' | 'MAFIA' | 'DOCTOR' | 'POLICE' | 'FOOL' | 'HEADHUNTER'
+  }
+  inspectionResults: [{ playerId: string; roleOrientation: 'GOOD' | 'BAD' | 'UNKNOWN' }]
+  yourHeadhunterTarget: string | undefined
 }

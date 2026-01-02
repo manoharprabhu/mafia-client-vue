@@ -47,13 +47,23 @@ function formatMsToHHMMsss(timestamp: number) {
 
   return `${hours}:${minutes}:${seconds}.${milliseconds}`
 }
+
+function getHeadhunterTargetName(): string | undefined {
+  const targetId = gameState.value?.yourHeadhunterTarget
+  if (targetId === undefined || targetId === null) {
+    return undefined
+  }
+
+  return gameState.value?.players.find((item) => item.playerId === targetId)?.name
+}
+
 </script>
 
 <template>
   <main>
     <div>
       <div><PhaseText :gameState="gameState" /></div>
-      <div><RoleText :role="gameState?.you.role" /></div>
+      <div><RoleText :role="gameState?.you.role" :hhTarget="getHeadhunterTargetName()" /></div>
       <div>
         <GamePlayersList
           :players="gameState?.players"
