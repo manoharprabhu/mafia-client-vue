@@ -158,7 +158,7 @@ export class RestClient {
     lobbyId: string,
     playerId: string,
     targetPlayerId: string,
-    type: 'villager' | 'mafia'
+    type: 'villager' | 'mafia' | 'doctor'
   ): Promise<HTTPResponse<VotePlayerResponse>> {
     const request = await this.client?.post<HTTPResponse<VotePlayerResponse>>(
       `${RestClient.root}/game/vote`,

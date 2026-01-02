@@ -53,6 +53,11 @@ async function voteNight(sourcePlayerID: string, targetPlayerID: string) {
   const lobbyId = LocalData.getInstance().getData<string>(LocalData.LOBBYID)!
   await RestClient.getInstance().votePlayer(lobbyId, sourcePlayerID, targetPlayerID, 'mafia')
 }
+
+async function voteNightDoctor(sourcePlayerID: string, targetPlayerID: string) {
+  const lobbyId = LocalData.getInstance().getData<string>(LocalData.LOBBYID)!
+  await RestClient.getInstance().votePlayer(lobbyId, sourcePlayerID, targetPlayerID, 'doctor')
+}
 </script>
 
 <template>
@@ -86,16 +91,18 @@ async function voteNight(sourcePlayerID: string, targetPlayerID: string) {
       >
         <Button @click="voteNight(you.playerId, item.playerId)" severity="danger">Vote</Button>
       </div>
-      <div v-if="
-      you?.alive &&
-      phase === 'NIGHT' &&
-      you?.role === 'DOCTOR' &&
-      item.alive &&
-      item.playerId !== you.playerId
+      <div
+        v-if="
+          you?.alive &&
+          phase === 'NIGHT' &&
+          you?.role === 'DOCTOR' &&
+          item.alive &&
+          item.playerId !== you.playerId
         "
       >
-        <!--If you are doctor, show on all players who are alive-->
-        <Button severity="info">Protect</Button>
+        <Button @click="voteNightDoctor(you.playerId, item.playerId)" severity="info"
+          >Protect</Button
+        >
       </div>
       <div
         v-if="voteMap !== undefined && voteMap[item.playerId] !== undefined"
