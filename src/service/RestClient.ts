@@ -2,7 +2,7 @@ import axios, { Axios } from 'axios'
 import { LocalData } from '@/service/LocalData.ts'
 export class RestClient {
   private static instance: RestClient | null = null
-  private static root: string = 'http://localhost:8080'
+  private static root: string = `${window.location.protocol}//${window.location.hostname}:8080`
   private client: Axios | undefined
 
   public static overrideHost(host: string) {
@@ -186,7 +186,7 @@ export class RestClient {
   public async policeInspect(
     lobbyId: string,
     playerId: string,
-    targetPlayerId: string
+    targetPlayerId: string,
   ): Promise<HTTPResponse<PoliceInspectResponse>> {
     const request = await this.client?.post<HTTPResponse<PoliceInspectResponse>>(
       `${RestClient.root}/game/police/inspect`,
@@ -212,13 +212,13 @@ export class RestClient {
 }
 
 export type HTTPResponse<T> = {
-  success: boolean,
-  message: string,
+  success: boolean
+  message: string
   data: T
 }
 
 export type CreateGameResponse = {
-  playerId: string,
+  playerId: string
   lobbyId: string
 }
 

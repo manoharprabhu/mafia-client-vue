@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import Panel from 'primevue/panel'
-
 defineProps<{
   time: number | undefined
 }>()

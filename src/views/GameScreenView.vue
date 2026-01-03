@@ -62,7 +62,7 @@ function getHeadhunterTargetName(): string | undefined {
   <main class="game-screen">
     <div class="game-header">
       <PhaseText :gameState="gameState" />
-      <RoleText :role="gameState?.you.role" :hhTarget="getHeadhunterTargetName()" />
+      <RoleText :you="gameState?.you" :hhTarget="getHeadhunterTargetName()" />
     </div>
 
     <div class="game-layout">

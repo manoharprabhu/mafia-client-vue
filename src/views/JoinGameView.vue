@@ -12,7 +12,7 @@ const name = ref<string>('')
 const lobbyId = ref<string>('')
 const errorMessage = ref<string>('')
 const isDisabled = ref<boolean>(false)
-const ip = ref('http://192.168.0.110:8080')
+const ip = ref(`${window.location.protocol}//${window.location.hostname}:8080`)
 const router = useRouter()
 
 async function join() {

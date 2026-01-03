@@ -11,7 +11,7 @@ import IftaLabel from 'primevue/iftalabel'
 const name = ref('')
 const isDisabled = ref(false)
 const errorMessage = ref('')
-const ip = ref('http://localhost:8080')
+const ip = ref(`${window.location.protocol}//${window.location.hostname}:8080`)
 const router = useRouter()
 
 async function create() {
