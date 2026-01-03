@@ -56,15 +56,17 @@ function getHeadhunterTargetName(): string | undefined {
 
   return gameState.value?.players.find((item) => item.playerId === targetId)?.name
 }
-
 </script>
 
 <template>
-  <main>
-    <div>
-      <div><PhaseText :gameState="gameState" /></div>
-      <div><RoleText :role="gameState?.you.role" :hhTarget="getHeadhunterTargetName()" /></div>
-      <div>
+  <main class="game-screen">
+    <div class="game-header">
+      <PhaseText :gameState="gameState" />
+      <RoleText :role="gameState?.you.role" :hhTarget="getHeadhunterTargetName()" />
+    </div>
+
+    <div class="game-layout">
+      <div class="players-section">
         <GamePlayersList
           :players="gameState?.players"
           :visibleRoles="gameState?.visibleRoles"
@@ -74,30 +76,110 @@ function getHeadhunterTargetName(): string | undefined {
           :you="gameState?.you!"
         />
       </div>
-      <div>
+
+      <div class="chat-section">
+        <div class="chat-header">Game Log</div>
         <div class="scroll-container" ref="scrollContainerRef">
           <div v-for="(item, index) in gameState?.messages" :key="index" class="list-item">
-            {{ formatMsToHHMMsss(item.timestamp) }} {{ item.message }}
+            <span class="timestamp">{{ formatMsToHHMMsss(item.timestamp) }}</span>
+            <span class="message-text">{{ item.message }}</span>
           </div>
         </div>
       </div>
     </div>
   </main>
 </template>
+
 <style scoped>
+.game-screen {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.game-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.game-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.players-section {
+  flex: 2;
+  display: flex;
+  justify-content: center;
+}
+
+.chat-section {
+  flex: 1;
+  min-width: 300px;
+  max-width: 400px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  height: fit-content;
+}
+
+.chat-header {
+  background-color: #2c3e50;
+  color: white;
+  padding: 12px 16px;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
 .scroll-container {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 300px;
+  height: 500px;
   overflow-y: auto;
-  border: 1px solid #ccc;
-  padding: 10px;
+  padding: 0;
+  background-color: #f8f9fa;
 }
 
 .list-item {
-  padding: 5px 0;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 10px 16px;
+  border-bottom: 1px solid #eaeaea;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.list-item:nth-child(even) {
+  background-color: #fcfcfc;
+}
+
+.timestamp {
+  font-size: 0.75rem;
+  color: #888;
+  font-family: monospace;
+}
+
+.message-text {
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+  .game-layout {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .players-section,
+  .chat-section {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .chat-section {
+    max-width: 600px; /* Keep chat readable on tablets but not too wide */
+  }
 }
 </style>

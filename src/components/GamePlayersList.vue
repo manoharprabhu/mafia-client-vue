@@ -91,7 +91,10 @@ async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
         </Tag>
         <Tag
           v-if="
-            visibleRoles[item.playerId] === 'VILLAGER' || visibleRoles[item.playerId] === 'POLICE' || visibleRoles[item.playerId] === 'DOCTOR'"
+            visibleRoles[item.playerId] === 'VILLAGER' ||
+            visibleRoles[item.playerId] === 'POLICE' ||
+            visibleRoles[item.playerId] === 'DOCTOR'
+          "
           severity="info"
         >
           {{ visibleRoles[item.playerId] }}
@@ -171,9 +174,13 @@ async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
   gap: 1rem;
   width: 100%;
   max-width: 800px;
-  min-width: 800px;
-  max-height: 800px;
-  min-height: 800px;
+  aspect-ratio: 1/1; /* Maintain square shape */
+}
+
+@media (max-width: 600px) {
+  .grid-container {
+    gap: 0.5rem;
+  }
 }
 
 .grid-item {
@@ -182,6 +189,19 @@ async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
   text-align: center;
   color: #010101;
   border-radius: 5px;
+
+  /* Flex centering for content */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 600px) {
+  .grid-item {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
 }
 .strikethrough-text {
   text-decoration: line-through;
