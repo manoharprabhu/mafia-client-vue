@@ -161,7 +161,7 @@ async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
         <div>I'm voting {{ getNameById(voteMap[item.playerId]) }}</div>
       </div>
       <div v-if="voteMap !== undefined && Object.keys(voteMap).length > 0" class="vote-received">
-        {{ Object.values(voteMap).filter((x) => x === item.playerId).length }} votes received
+        {{ Object.values(voteMap).filter((x) => x === item.playerId).length || '' }}
       </div>
     </div>
   </div>
@@ -189,6 +189,7 @@ async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
   text-align: center;
   color: #010101;
   border-radius: 5px;
+  position: relative; /* Needed for absolute positioning of vote count */
 
   /* Flex centering for content */
   display: flex;
@@ -211,6 +212,11 @@ async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
   font-weight: bold;
 }
 .vote-received {
-  font-size: 0.8em;
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  color: red;
+  font-weight: bold;
+  font-size: 1.2em;
 }
 </style>
