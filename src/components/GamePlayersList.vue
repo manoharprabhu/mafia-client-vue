@@ -77,8 +77,25 @@ async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
         <Tag severity="success" value="YOU"></Tag>
       </div>
       <div :hidden="item.alive"><Tag severity="danger" value="DEAD" /></div>
-      <div v-if="visibleRoles !== undefined && visibleRoles[item.playerId] === 'MAFIA'">
-        <Tag severity="warn" value="MAFIA" />
+      <div v-if="visibleRoles !== undefined && visibleRoles[item.playerId] !== undefined">
+        <Tag v-if="visibleRoles[item.playerId] === 'MAFIA'" severity="danger"
+          >{{ visibleRoles[item.playerId] }}
+        </Tag>
+        <Tag
+          v-if="
+            visibleRoles[item.playerId] === 'HEADHUNTER' || visibleRoles[item.playerId] === 'FOOL'
+          "
+          severity="warn"
+        >
+          {{ visibleRoles[item.playerId] }}
+        </Tag>
+        <Tag
+          v-if="
+            visibleRoles[item.playerId] === 'VILLAGER' || visibleRoles[item.playerId] === 'POLICE' || visibleRoles[item.playerId] === 'DOCTOR'"
+          severity="info"
+        >
+          {{ visibleRoles[item.playerId] }}
+        </Tag>
       </div>
       <div
         v-if="
