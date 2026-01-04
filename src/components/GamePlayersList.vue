@@ -32,6 +32,7 @@ const props = defineProps<{
       }
     | undefined
   inspectionResults: [{ playerId: string; roleOrientation: 'GOOD' | 'BAD' | 'UNKNOWN' }] | undefined
+  hasInspectedAlready: boolean
 }>()
 
 function getNameById(playerId: string | undefined): string {
@@ -147,6 +148,7 @@ async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
           phase === 'NIGHT' &&
           you?.role === 'POLICE' &&
           item.alive &&
+          !hasInspectedAlready &&
           item.playerId !== you.playerId
         "
       >

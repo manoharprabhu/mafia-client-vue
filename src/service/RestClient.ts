@@ -272,4 +272,5 @@ export type GetGameResponse = {
   inspectionResults: [{ playerId: string; roleOrientation: 'GOOD' | 'BAD' | 'UNKNOWN' }]
   yourHeadhunterTarget: string | undefined
   winner: 'VILLAGERS_WIN' | 'MAFIA_WIN' | 'HEADHUNTER_WIN' | 'FOOL_WIN' | 'NONE' | undefined
+  hasInspectedAlready: boolean
 }

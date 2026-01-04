@@ -78,6 +78,7 @@ function getHeadhunterTargetName(): string | undefined {
           :phase="gameState?.phase"
           :voteMap="gameState?.voteMap"
           :inspectionResults="gameState?.inspectionResults"
+          :hasInspectedAlready="gameState?.hasInspectedAlready"
           :you="gameState?.you!"
         />
       </div>
