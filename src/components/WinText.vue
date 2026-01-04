@@ -7,7 +7,7 @@ defineProps<{
 </script>
 
 <template>
-  <div v-if="info !== undefined">
+  <div v-if="info !== undefined && info !== 'NONE'">
     <Panel class="panel">
       <div v-if="info === 'VILLAGERS_WIN'">Villagers win</div>
       <div v-if="info === 'FOOL_WIN'">The fool wins</div>
@@ -25,6 +25,7 @@ defineProps<{
   text-align: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 2em;
+  font-size: 4.5em;
+  background-color: #ff7979;
 }
 </style>

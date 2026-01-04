@@ -7,7 +7,7 @@ import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
 import IftaLabel from 'primevue/iftalabel'
-
+import Panel from 'primevue/panel'
 const name = ref('')
 const isDisabled = ref(false)
 const errorMessage = ref('')
@@ -40,30 +40,44 @@ onMounted(() => {})
 </script>
 
 <template>
-  <main>
-    <header>
-      <h1>Create a game</h1>
-    </header>
-    <div>
-      <IftaLabel>
-        <InputText id="ip" v-model="ip" type="text" />
-        <label for="ip">Server IP address and port</label>
-      </IftaLabel>
-    </div>
-    <br />
-    <div>
-      <IftaLabel>
-        <InputText id="name" v-model="name" type="text" />
-        <label for="name">Your name</label>
-      </IftaLabel>
-    </div>
-    <br />
-    <div>
-      <Button :disabled="isDisabled" @click="create">Create</Button>
-    </div>
-    <br />
-    <div :hidden="errorMessage === ''">
-      <Message severity="error">{{ errorMessage }}</Message>
-    </div>
+  <main class="container">
+    <Panel class="panel">
+      <header>
+        <h1>Create a game</h1>
+      </header>
+      <div>
+        <IftaLabel>
+          <InputText id="ip" v-model="ip" type="text" />
+          <label for="ip">Server IP address and port</label>
+        </IftaLabel>
+      </div>
+      <br />
+      <div>
+        <IftaLabel>
+          <InputText id="name" v-model="name" type="text" />
+          <label for="name">Your name</label>
+        </IftaLabel>
+      </div>
+      <br />
+      <div>
+        <Button :disabled="isDisabled" @click="create">Create</Button>
+      </div>
+      <br />
+      <div :hidden="errorMessage === ''">
+        <Message severity="error">{{ errorMessage }}</Message>
+      </div>
+    </Panel>
   </main>
 </template>
+<style scoped>
+.container {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+}
+.panel {
+  margin-left: auto;
+  margin-right: auto;
+  width: 25%;
+}
+</style>
