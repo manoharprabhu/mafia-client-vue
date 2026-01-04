@@ -6,6 +6,7 @@ import PhaseText from '@/components/PhaseText.vue'
 import TimerText from '@/components/TimerText.vue'
 import GamePlayersList from '@/components/GamePlayersList.vue'
 import RoleText from '@/components/RoleText.vue'
+import WinText from '@/components/WinText.vue'
 
 const gameState = ref<GetGameResponse>()
 const scrollContainerRef = ref<HTMLElement | null>(null)
@@ -61,8 +62,12 @@ function getHeadhunterTargetName(): string | undefined {
 <template>
   <main class="game-screen">
     <div class="game-header">
+      <WinText :info="gameState?.winner" />
       <PhaseText :gameState="gameState" />
-      <RoleText :you="gameState?.you" :hhTarget="getHeadhunterTargetName()" />
+      <RoleText
+        :you="gameState?.you"
+        :hhTarget="getHeadhunterTargetName()"
+      />
     </div>
 
     <div class="game-layout">
