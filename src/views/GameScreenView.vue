@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { type GetGameResponse, RestClient } from '@/service/RestClient.ts'
 import { LocalData } from '@/service/LocalData.ts'
 import PhaseText from '@/components/PhaseText.vue'
-import TimerText from '@/components/TimerText.vue'
 import GamePlayersList from '@/components/GamePlayersList.vue'
 import RoleText from '@/components/RoleText.vue'
 import WinText from '@/components/WinText.vue'
+import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
+import Fluid from 'primevue/fluid'
 
 const gameState = ref<GetGameResponse>()
+const message = ref<string>('')
 const scrollContainerRef = ref<HTMLElement | null>(null)
 
 let timerHandle: number
@@ -57,6 +60,13 @@ function getHeadhunterTargetName(): string | undefined {
 
   return gameState.value?.players.find((item) => item.playerId === targetId)?.name
 }
+
+async function sendMessage() {
+  const playerId = LocalData.getInstance().getData<string>(LocalData.PLAYERID)!
+  const lobbyId = LocalData.getInstance().getData<string>(LocalData.LOBBYID)!
+  await RestClient.getInstance().sendMessage(lobbyId, playerId, message.value)
+  message.value = ''
+}
 </script>
 
 <template>
@@ -64,10 +74,7 @@ function getHeadhunterTargetName(): string | undefined {
     <div class="game-header">
       <WinText :info="gameState?.winner" />
       <PhaseText :gameState="gameState" />
-      <RoleText
-        :you="gameState?.you"
-        :hhTarget="getHeadhunterTargetName()"
-      />
+      <RoleText :you="gameState?.you" :hhTarget="getHeadhunterTargetName()" />
     </div>
 
     <div class="game-layout">
@@ -86,11 +93,18 @@ function getHeadhunterTargetName(): string | undefined {
       <div class="chat-section">
         <div class="chat-header">Game Log</div>
         <div class="scroll-container" ref="scrollContainerRef">
-          <div v-for="(item, index) in gameState?.messages" :key="index" class="list-item">
+          <div v-for="(item, index) in gameState?.messages" :key="index" :class="{'list-item': item.type === 0, 'list-item-chat': item.type === 1}">
             <span class="timestamp">{{ formatMsToHHMMsss(item.timestamp) }}</span>
-            <span class="message-text">{{ item.message }}</span>
+            <span
+              class="message-text"
+              >{{ item.message }}</span
+            >
           </div>
         </div>
+        <Fluid>
+          <InputText type="text" style="width: 100%; height: 100px" v-model="message" />
+          <Button @click="sendMessage">Send</Button>
+        </Fluid>
       </div>
     </div>
   </main>
@@ -156,8 +170,13 @@ function getHeadhunterTargetName(): string | undefined {
   gap: 4px;
 }
 
-.list-item:nth-child(even) {
-  background-color: #fcfcfc;
+.list-item-chat {
+  padding: 10px 16px;
+  border-bottom: 1px solid #eaeaea;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background-color: antiquewhite;
 }
 
 .timestamp {

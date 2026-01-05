@@ -32,7 +32,7 @@ const props = defineProps<{
       }
     | undefined
   inspectionResults: [{ playerId: string; roleOrientation: 'GOOD' | 'BAD' | 'UNKNOWN' }] | undefined
-  hasInspectedAlready: boolean
+  hasInspectedAlready: boolean | undefined
 }>()
 
 function getNameById(playerId: string | undefined): string {

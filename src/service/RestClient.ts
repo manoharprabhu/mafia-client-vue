@@ -209,6 +209,21 @@ export class RestClient {
 
     return request.data
   }
+
+  public async sendMessage(
+    lobbyId: string,
+    playerId: string,
+    message: string,
+  ): Promise<void> {
+    await this.client?.post<HTTPResponse<void>>(
+      `${RestClient.root}/game/chat`,
+      {
+        lobbyId,
+        playerId,
+        message,
+      },
+    )
+  }
 }
 
 export type HTTPResponse<T> = {
@@ -263,7 +278,7 @@ export type GetGameResponse = {
     alive: boolean
   }
   players: [{ playerId: string; name: string; alive: boolean }]
-  messages: [{ timestamp: number; message: string }]
+  messages: [{ timestamp: number; message: string; type: number }]
   gameResult: string
   voteMap: { [key: string]: string }
   visibleRoles: {
