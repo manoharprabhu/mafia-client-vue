@@ -11,6 +11,7 @@ import Button from 'primevue/button'
 const gameState = ref<GetGameResponse>()
 const message = ref<string>('')
 const scrollContainerRef = ref<HTMLElement | null>(null)
+const showWinPopup = ref<boolean>(true)
 let timerHandle: number
 onMounted(() => {
   timerHandle = setInterval(async () => {
@@ -70,11 +71,15 @@ async function skipPhase() {
   const lobbyId = LocalData.getInstance().getData<string>(LocalData.LOBBYID)!
   await RestClient.getInstance().skipDiscussion(lobbyId, playerId)
 }
+
+function closeWinPopup() {
+  showWinPopup.value = false
+}
 </script>
 
 <template>
   <main class="game-screen">
-    <WinText :info="gameState?.winner" />
+    <WinText v-if="showWinPopup" :info="gameState?.winner" @close="closeWinPopup" />
     
     <div class="game-layout">
       <div class="left-column">

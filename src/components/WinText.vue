@@ -1,10 +1,39 @@
 <script setup lang="ts">
 import Panel from 'primevue/panel'
-import { computed } from 'vue'
+import Button from 'primevue/button'
+import { computed, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps<{
   info: 'VILLAGERS_WIN' | 'MAFIA_WIN' | 'HEADHUNTER_WIN' | 'FOOL_WIN' | 'NONE' | undefined
 }>()
+
+const emit = defineEmits<{
+  close: []
+}>()
+
+const closePopup = () => {
+  emit('close')
+}
+
+const handleEscape = (event: KeyboardEvent) => {
+  if (event.key === 'Escape') {
+    closePopup()
+  }
+}
+
+const handleOverlayClick = (event: MouseEvent) => {
+  if ((event.target as HTMLElement).classList.contains('win-overlay')) {
+    closePopup()
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('keydown', handleEscape)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleEscape)
+})
 
 const winnerInfo = computed(() => {
   const winners = {
@@ -39,12 +68,21 @@ const winnerInfo = computed(() => {
 </script>
 
 <template>
-  <div v-if="winnerInfo" class="win-overlay">
+  <div v-if="winnerInfo" class="win-overlay" @click="handleOverlayClick">
     <div class="win-card">
       <div class="confetti">
         <span class="confetti-piece" v-for="i in 20" :key="i" :style="{ animationDelay: `${i * 0.1}s` }"></span>
       </div>
       <div class="win-content" :style="{ background: winnerInfo.gradient }">
+        <Button 
+          icon="pi pi-times" 
+          class="close-button" 
+          text 
+          rounded 
+          severity="secondary" 
+          @click="closePopup"
+          aria-label="Close"
+        />
         <div class="win-icon">{{ winnerInfo.icon }}</div>
         <h1 class="win-title">{{ winnerInfo.title }}</h1>
         <p class="win-subtitle">{{ winnerInfo.subtitle }}</p>
@@ -104,6 +142,21 @@ const winnerInfo = computed(() => {
   color: white;
   position: relative;
   overflow: hidden;
+}
+
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  color: white !important;
+  background: rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.3s ease;
+}
+
+.close-button:hover {
+  background: rgba(0, 0, 0, 0.4) !important;
+  transform: scale(1.1);
 }
 
 .win-icon {
