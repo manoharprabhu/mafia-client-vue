@@ -171,54 +171,101 @@ async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
 <style scoped>
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(4, 0.2fr);
-  grid-template-rows: repeat(4, 0.2fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
   width: 100%;
-  max-width: 800px;
-  aspect-ratio: 1/1; /* Maintain square shape */
+  max-width: 900px;
+  padding: 1rem;
+}
+
+@media (max-width: 900px) {
+  .grid-container {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
 }
 
 @media (max-width: 600px) {
   .grid-container {
+    grid-template-columns: repeat(2, 1fr);
     gap: 0.5rem;
   }
 }
 
 .grid-item {
-  background-color: #efefef;
-  padding: 1rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
+  padding: 1.25rem;
   text-align: center;
-  color: #010101;
-  border-radius: 5px;
-  position: relative; /* Needed for absolute positioning of vote count */
+  color: #2d3748;
+  border-radius: 16px;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
 
-  /* Flex centering for content */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
+  min-height: 140px;
+}
+
+.grid-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border-color: #667eea;
 }
 
 @media (max-width: 600px) {
   .grid-item {
-    padding: 0.5rem;
+    padding: 0.75rem;
     font-size: 0.8rem;
+    min-height: 120px;
   }
 }
+
 .strikethrough-text {
   text-decoration: line-through;
+  opacity: 0.5;
 }
+
 .vote-performed {
-  font-size: 1.1em;
-  font-weight: bold;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+  padding: 0.375rem 0.75rem;
+  border-radius: 8px;
+  margin-top: 0.25rem;
 }
+
 .vote-received {
   position: absolute;
-  bottom: 5px;
-  right: 5px;
-  color: red;
-  font-weight: bold;
-  font-size: 1.2em;
+  top: 8px;
+  right: 8px;
+  background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+  color: white;
+  font-weight: 800;
+  font-size: 1rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(245, 101, 101, 0.4);
+  animation: voteAppear 0.3s ease;
+}
+
+@keyframes voteAppear {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 </style>

@@ -6,9 +6,7 @@ import PhaseText from '@/components/PhaseText.vue'
 import GamePlayersList from '@/components/GamePlayersList.vue'
 import RoleText from '@/components/RoleText.vue'
 import WinText from '@/components/WinText.vue'
-import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
-import Fluid from 'primevue/fluid'
 
 const gameState = ref<GetGameResponse>()
 const message = ref<string>('')
@@ -76,6 +74,25 @@ async function skipPhase() {
 
 <template>
   <main class="game-screen">
+    <div class="game-header">
+      <WinText :info="gameState?.winner" />
+      <PhaseText :gameState="gameState" />
+      <RoleText :you="gameState?.you" :hhTarget="getHeadhunterTargetName()" />
+      <div
+        v-if="!gameState?.you.hasSkippedDiscussion && gameState?.phase === 'DAY_DISCUSSION'"
+        style="text-align: center"
+      >
+        <Button
+          @click="skipPhase"
+          severity="help"
+          size="large"
+          style="padding: 0.75rem 2rem; border-radius: 12px; font-weight: 600"
+        >
+          ⏩ Vote to Skip Discussion
+        </Button>
+      </div>
+    </div>
+
     <div class="game-layout">
       <div class="players-section">
         <GamePlayersList
@@ -87,14 +104,6 @@ async function skipPhase() {
           :hasInspectedAlready="gameState?.hasInspectedAlready"
           :you="gameState?.you!"
         />
-      </div>
-
-      <div class="game-header">
-        <WinText :info="gameState?.winner" />
-        <PhaseText :gameState="gameState" />
-        <RoleText :you="gameState?.you" :hhTarget="getHeadhunterTargetName()" />
-        <Button @click="skipPhase" v-if="!gameState?.you.hasSkippedDiscussion && gameState?.phase === 'DAY_DISCUSSION'" severity="help">Vote to skip discussion</Button
-        >
       </div>
 
       <div class="chat-section">
@@ -109,11 +118,18 @@ async function skipPhase() {
             <span class="message-text">{{ item.message }}</span>
           </div>
         </div>
-        <Fluid>
-          <InputText type="text" style="width: 100%; height: 100px" v-model="message" />
-          <Button @click="sendMessage">Send</Button>
-        </Fluid>
-        <br />
+        <div class="chat-input-section">
+          <div class="chat-input-wrapper">
+            <textarea
+              class="chat-input"
+              v-model="message"
+              placeholder="Type your message..."
+              rows="2"
+              @keydown.enter.exact.prevent="sendMessage"
+            ></textarea>
+            <button @click="sendMessage" class="send-button">Send</button>
+          </div>
+        </div>
       </div>
     </div>
   </main>
@@ -121,14 +137,14 @@ async function skipPhase() {
 
 <style scoped>
 .game-screen {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 20px;
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: #efefef;
 }
 
 .game-header {
-  margin-bottom: 2rem;
-  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto 2rem;
 }
 
 .game-layout {
@@ -137,6 +153,8 @@ async function skipPhase() {
   gap: 2rem;
   justify-content: center;
   align-items: flex-start;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .players-section {
@@ -147,57 +165,164 @@ async function skipPhase() {
 
 .chat-section {
   flex: 1;
-  min-width: 300px;
-  max-width: 400px;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 320px;
+  max-width: 420px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   height: fit-content;
+  animation: slideInRight 0.5s ease;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .chat-header {
-  background-color: #2c3e50;
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
   color: white;
-  padding: 12px 16px;
-  font-weight: bold;
-  font-size: 1.1rem;
+  padding: 1.25rem 1.5rem;
+  font-weight: 700;
+  font-size: 1.125rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chat-header::before {
+  content: '💬';
+  font-size: 1.5rem;
 }
 
 .scroll-container {
-  height: 300px;
+  height: 400px;
   overflow-y: auto;
   padding: 0;
-  background-color: #f8f9fa;
+  background: #f7fafc;
 }
 
-.list-item {
-  padding: 10px 16px;
-  border-bottom: 1px solid #eaeaea;
+.scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background: #edf2f7;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+.list-item,
+.list-item-chat {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.375rem;
+  transition: background 0.2s ease;
+  animation: messageAppear 0.3s ease;
+}
+
+@keyframes messageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.list-item:hover {
+  background: #edf2f7;
 }
 
 .list-item-chat {
-  padding: 10px 16px;
-  border-bottom: 1px solid #eaeaea;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  background-color: antiquewhite;
+  background: linear-gradient(to right, #fef5e7 0%, #fef9f3 100%);
+  border-left: 3px solid #ed8936;
+}
+
+.list-item-chat:hover {
+  background: linear-gradient(to right, #fdebd0 0%, #fef5e7 100%);
 }
 
 .timestamp {
   font-size: 0.75rem;
-  color: #888;
-  font-family: monospace;
+  color: #a0aec0;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
 }
 
 .message-text {
-  font-size: 0.95rem;
-  color: #333;
-  line-height: 1.4;
+  font-size: 0.9375rem;
+  color: #2d3748;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.chat-input-section {
+  padding: 1rem;
+  background: white;
+  border-top: 2px solid #e2e8f0;
+}
+
+.chat-input-wrapper {
+  display: flex;
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 0.875rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 0.9375rem;
+  transition: all 0.3s ease;
+  resize: none;
+  font-family: inherit;
+}
+
+.chat-input:focus {
+  border-color: #667eea;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.send-button {
+  padding: 0.875rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.send-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.send-button:active {
+  transform: translateY(0);
 }
 
 @media (max-width: 900px) {
@@ -213,7 +338,17 @@ async function skipPhase() {
   }
 
   .chat-section {
-    max-width: 600px; /* Keep chat readable on tablets but not too wide */
+    max-width: 600px;
+  }
+}
+
+@media (max-width: 600px) {
+  .game-screen {
+    padding: 1rem;
+  }
+
+  .scroll-container {
+    height: 300px;
   }
 }
 </style>

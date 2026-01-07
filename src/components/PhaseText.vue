@@ -12,63 +12,171 @@ const panelStyle = computed(() => {
   switch (props.gameState?.phase) {
     case 'WAITING_FOR_PLAYERS':
       return {
-        backgroundColor: '#f5f5f5',
-        color: '#333333',
+        background: 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%)',
+        color: '#2d3748',
+        borderColor: '#a0aec0',
       }
 
     case 'START':
       return {
-        backgroundColor: '#e3f2fd',
-        color: '#0d47a1',
+        background: 'linear-gradient(135deg, #4299e1 0%, #3182ce 100%)',
+        color: '#ffffff',
+        borderColor: '#2b6cb0',
       }
 
     case 'NIGHT':
     case 'RESOLVE_NIGHT':
       return {
-        backgroundColor: '#1a1a2e',
-        color: '#eaeaea',
+        background: 'linear-gradient(135deg, #1a202c 0%, #2d3748 100%)',
+        color: '#f7fafc',
+        borderColor: '#4a5568',
       }
 
     case 'DAY_DISCUSSION':
       return {
-        backgroundColor: '#fff8e1',
-        color: '#5d4037',
+        background: 'linear-gradient(135deg, #fbd38d 0%, #f6ad55 100%)',
+        color: '#744210',
+        borderColor: '#dd6b20',
       }
 
     case 'DAY_VOTING':
     case 'RESOLVE_DAY':
       return {
-        backgroundColor: '#ffebee',
-        color: '#b71c1c',
+        background: 'linear-gradient(135deg, #fc8181 0%, #f56565 100%)',
+        color: '#ffffff',
+        borderColor: '#e53e3e',
       }
 
     default:
       return {
-        backgroundColor: '#ffffff',
-        color: '#000000',
+        background: 'linear-gradient(135deg, #ffffff 0%, #f7fafc 100%)',
+        color: '#2d3748',
+        borderColor: '#e2e8f0',
       }
+  }
+})
+
+const phaseIcon = computed(() => {
+  switch (props.gameState?.phase) {
+    case 'NIGHT':
+    case 'RESOLVE_NIGHT':
+      return '🌙'
+    case 'DAY_DISCUSSION':
+      return '☀️'
+    case 'DAY_VOTING':
+    case 'RESOLVE_DAY':
+      return '🗳️'
+    case 'START':
+      return '🎮'
+    default:
+      return '⏳'
   }
 })
 </script>
 
 <template>
-  <Panel :style="panelStyle">
-    <div class="phase">
-      <span v-if="gameState === undefined">-</span>
-      <span v-if="gameState?.phase === 'WAITING_FOR_PLAYERS'">Waiting for players to join</span>
-      <span v-if="gameState?.phase === 'START'">Assigning roles</span>
-      <span v-if="gameState?.phase === 'NIGHT'">Night</span>
-      <span v-if="gameState?.phase === 'RESOLVE_NIGHT'">Night</span>
-      <span v-if="gameState?.phase === 'DAY_DISCUSSION'">Day</span>
-      <span v-if="gameState?.phase === 'DAY_VOTING'">Day - Vote someone out of the village</span>
-      <span v-if="gameState?.phase === 'RESOLVE_DAY'">Day - Vote someone out of the village</span>
-      (<TimerText :time="gameState?.timeRemainingSeconds" /> seconds left)
+  <div 
+    class="phase-container" 
+    :style="{
+      background: panelStyle.background,
+      color: panelStyle.color,
+      borderColor: panelStyle.borderColor
+    }"
+  >
+    <div class="phase-content">
+      <span class="phase-icon">{{ phaseIcon }}</span>
+      <div class="phase-text">
+        <span class="phase-label" v-if="gameState === undefined">Loading...</span>
+        <span class="phase-label" v-if="gameState?.phase === 'WAITING_FOR_PLAYERS'">Waiting for players to join</span>
+        <span class="phase-label" v-if="gameState?.phase === 'START'">Assigning roles</span>
+        <span class="phase-label" v-if="gameState?.phase === 'NIGHT'">Night Phase</span>
+        <span class="phase-label" v-if="gameState?.phase === 'RESOLVE_NIGHT'">Night Phase</span>
+        <span class="phase-label" v-if="gameState?.phase === 'DAY_DISCUSSION'">Day Discussion</span>
+        <span class="phase-label" v-if="gameState?.phase === 'DAY_VOTING'">Voting Time</span>
+        <span class="phase-label" v-if="gameState?.phase === 'RESOLVE_DAY'">Voting Time</span>
+        <div class="timer-section">
+          <TimerText :time="gameState?.timeRemainingSeconds" /> seconds remaining
+        </div>
+      </div>
     </div>
-  </Panel>
-  <br />
+  </div>
 </template>
 <style scoped>
-.phase {
-  font-size: 1.5em;
+.phase-container {
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border: 2px solid;
+  transition: all 0.3s ease;
+  animation: phaseAppear 0.5s ease;
+}
+
+@keyframes phaseAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.phase-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.phase-icon {
+  font-size: 3rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.phase-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.phase-label {
+  font-size: 1.75rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.timer-section {
+  font-size: 1.125rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+  .phase-container {
+    padding: 1rem 1.5rem;
+  }
+  
+  .phase-icon {
+    font-size: 2rem;
+  }
+  
+  .phase-label {
+    font-size: 1.25rem;
+  }
+  
+  .timer-section {
+    font-size: 0.875rem;
+  }
 }
 </style>
