@@ -287,7 +287,7 @@ export type GetGameResponse = {
   visibleRoles: {
     [key: string]: 'VILLAGER' | 'MAFIA' | 'DOCTOR' | 'POLICE' | 'FOOL' | 'HEADHUNTER'
   }
-  inspectionResults: [{ playerId: string; roleOrientation: 'GOOD' | 'BAD' | 'UNKNOWN' }]
+  inspectionResults: [{ playerId: string; roleOrientation: 'GOOD' | 'BAD' }]
   yourHeadhunterTarget: string | undefined
   winner: 'VILLAGERS_WIN' | 'MAFIA_WIN' | 'HEADHUNTER_WIN' | 'FOOL_WIN' | 'NONE' | undefined
   hasInspectedAlready: boolean

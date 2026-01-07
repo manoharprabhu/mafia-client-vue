@@ -217,7 +217,7 @@ function closeWinPopup() {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 2rem);
+  height: calc(90vh - 2rem);
   animation: slideInRight 0.5s ease;
 }
 

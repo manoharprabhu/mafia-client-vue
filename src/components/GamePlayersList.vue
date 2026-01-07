@@ -31,7 +31,7 @@ const props = defineProps<{
         alive: boolean
       }
     | undefined
-  inspectionResults: [{ playerId: string; roleOrientation: 'GOOD' | 'BAD' | 'UNKNOWN' }] | undefined
+  inspectionResults: [{ playerId: string; roleOrientation: 'GOOD' | 'BAD' }] | undefined
   hasInspectedAlready: boolean | undefined
 }>()
 

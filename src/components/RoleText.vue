@@ -44,7 +44,7 @@ const roleInfo = computed(() => {
       color: '#667eea',
       bgColor: 'rgba(102, 126, 234, 0.1)',
       title: 'Police',
-      description: 'You can inspect one player each night. Results show as Good (Villager/Police/Doctor), Bad (Mafia), or Unknown (Fool/Headhunter).'
+      description: 'You can inspect one player each night. Results show as Good (Villager/Police/Doctor/Headhunter/Fool) or Bad (Mafia)'
     },
     FOOL: {
       icon: '🤡',
