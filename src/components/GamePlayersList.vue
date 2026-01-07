@@ -71,7 +71,7 @@ async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
 <template>
   <div class="grid-container">
     <div v-for="item in players" :key="item.playerId" class="grid-item">
-      <span :class="{ 'strikethrough-text': !item.alive }" style="font-size: 1.5em">{{
+      <span :class="{ 'strikethrough-text': !item.alive }" style="font-size: 1.2em">{{
         item.name
       }}</span>
       <div :hidden="item.playerId !== you?.playerId">
@@ -172,16 +172,16 @@ async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
 .grid-container {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
+  gap: 0.8rem;
   width: 100%;
-  max-width: 900px;
-  padding: 1rem;
+  max-width: 720px;
+  padding: 0.8rem;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 720px) {
   .grid-container {
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
+    gap: 0.6rem;
   }
 }
 
@@ -194,12 +194,12 @@ async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
 
 .grid-item {
   background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
-  padding: 1.25rem;
+  padding: 1rem;
   text-align: center;
   color: #2d3748;
-  border-radius: 16px;
+  border-radius: 12.8px;
   position: relative;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3.2px 9.6px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   border: 2px solid transparent;
 
@@ -207,21 +207,21 @@ async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  min-height: 140px;
+  gap: 0.4rem;
+  min-height: 112px;
 }
 
 .grid-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3.2px);
+  box-shadow: 0 6.4px 16px rgba(0, 0, 0, 0.15);
   border-color: #667eea;
 }
 
 @media (max-width: 600px) {
   .grid-item {
-    padding: 0.75rem;
-    font-size: 0.8rem;
-    min-height: 120px;
+    padding: 0.6rem;
+    font-size: 0.64rem;
+    min-height: 96px;
   }
 }
 

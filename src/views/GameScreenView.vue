@@ -243,11 +243,6 @@ function closeWinPopup() {
   gap: 0.5rem;
 }
 
-.chat-header::before {
-  content: '💬';
-  font-size: 1.5rem;
-}
-
 .scroll-container {
   flex: 1;
   overflow-y: auto;
