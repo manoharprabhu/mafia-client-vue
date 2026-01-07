@@ -90,113 +90,95 @@ const roleInfo = computed(() => {
 
 <style scoped>
 .role-container {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
 }
 
 .role-card {
   background: white;
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: 2px solid;
   transition: all 0.3s ease;
-  animation: roleReveal 0.6s ease;
-}
-
-@keyframes roleReveal {
-  from {
-    opacity: 0;
-    transform: rotateY(-10deg);
-  }
-  to {
-    opacity: 1;
-    transform: rotateY(0);
-  }
 }
 
 .role-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .role-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .role-icon {
-  font-size: 3rem;
-  animation: bounce 2s ease-in-out infinite;
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
+  font-size: 1.5rem;
+  flex-shrink: 0;
 }
 
 .role-title-section {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.125rem;
+  min-width: 0;
 }
 
 .role-label {
-  font-size: 0.75rem;
+  font-size: 0.625rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   color: #718096;
   font-weight: 600;
 }
 
 .role-title {
-  font-size: 1.5rem;
-  font-weight: 800;
+  font-size: 1rem;
+  font-weight: 700;
   margin: 0;
+  white-space: nowrap;
 }
 
 .role-description {
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: 0.8125rem;
+  line-height: 1.4;
   color: #4a5568;
   margin: 0;
 }
 
 .death-card {
   background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 0.75rem;
   border: 2px solid #4a5568;
 }
 
 .death-icon {
-  font-size: 3rem;
+  font-size: 1.5rem;
   opacity: 0.8;
+  flex-shrink: 0;
 }
 
 .death-text {
   flex: 1;
+  min-width: 0;
 }
 
 .death-title {
-  font-size: 1.5rem;
-  font-weight: 800;
+  font-size: 1rem;
+  font-weight: 700;
   color: #fc8181;
-  margin: 0 0 0.5rem 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin: 0 0 0.25rem 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .death-subtitle {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: #cbd5e0;
   margin: 0;
 }
@@ -204,20 +186,20 @@ const roleInfo = computed(() => {
 @media (max-width: 600px) {
   .role-card,
   .death-card {
-    padding: 1rem;
+    padding: 0.5rem 0.75rem;
   }
   
   .role-icon,
   .death-icon {
-    font-size: 2rem;
+    font-size: 1.25rem;
   }
   
   .role-title {
-    font-size: 1.25rem;
+    font-size: 0.875rem;
   }
   
   .death-title {
-    font-size: 1.25rem;
+    font-size: 0.875rem;
   }
 }
 </style>

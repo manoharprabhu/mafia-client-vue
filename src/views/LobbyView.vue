@@ -156,22 +156,23 @@ async function startGame() {
 .lobby-title {
   font-size: 2.5rem;
   font-weight: 800;
-  color: white;
+  color: #1a202c;
   margin-bottom: 1.5rem;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .lobby-code-section {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .lobby-code-label {
   display: block;
-  color: rgba(255, 255, 255, 0.9);
+  color: #4a5568;
   font-size: 0.875rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
@@ -183,15 +184,15 @@ async function startGame() {
   font-family: 'Courier New', monospace;
   font-size: 2rem;
   font-weight: 800;
-  color: white;
+  color: #2d3748;
   letter-spacing: 4px;
   margin-bottom: 0.5rem;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  text-shadow: none;
 }
 
 .lobby-code-hint {
   display: block;
-  color: rgba(255, 255, 255, 0.7);
+  color: #718096;
   font-size: 0.75rem;
 }
 
@@ -389,17 +390,20 @@ async function startGame() {
 
 .requirement-text {
   margin-top: 0.75rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: #2d3748;
   font-size: 0.875rem;
+  font-weight: 600;
 }
 
 .waiting-host {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
+  border: 2px solid #e2e8f0;
+  color: #2d3748;
   padding: 1.25rem;
   border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
 }
 
 @media (max-width: 600px) {

@@ -15,7 +15,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
 body {
   font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #2e86de;
+  background-color: #efefef;
   min-height: 100vh;
   color: #2d3748;
 }

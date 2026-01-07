@@ -95,7 +95,8 @@ const phaseIcon = computed(() => {
         <span class="phase-label" v-if="gameState?.phase === 'DAY_VOTING'">Voting Time</span>
         <span class="phase-label" v-if="gameState?.phase === 'RESOLVE_DAY'">Voting Time</span>
         <div class="timer-section">
-          <TimerText :time="gameState?.timeRemainingSeconds" /> seconds remaining
+          <TimerText :time="gameState?.timeRemainingSeconds" />
+          <span class="timer-label">seconds remaining</span>
         </div>
       </div>
     </div>
@@ -103,80 +104,68 @@ const phaseIcon = computed(() => {
 </template>
 <style scoped>
 .phase-container {
-  border-radius: 16px;
-  padding: 1.5rem 2rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: 2px solid;
   transition: all 0.3s ease;
-  animation: phaseAppear 0.5s ease;
-}
-
-@keyframes phaseAppear {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
 }
 
 .phase-content {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  justify-content: center;
+  gap: 0.75rem;
+  justify-content: flex-start;
 }
 
 .phase-icon {
-  font-size: 3rem;
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
+  font-size: 1.5rem;
+  flex-shrink: 0;
 }
 
 .phase-text {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.25rem;
+  min-width: 0;
 }
 
 .phase-label {
-  font-size: 1.75rem;
+  font-size: 1rem;
   font-weight: 700;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
 }
 
 .timer-section {
-  font-size: 1.125rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.timer-label {
+  font-size: 0.875rem;
   font-weight: 600;
   opacity: 0.9;
 }
 
 @media (max-width: 600px) {
   .phase-container {
-    padding: 1rem 1.5rem;
+    padding: 0.5rem 0.75rem;
   }
   
   .phase-icon {
-    font-size: 2rem;
-  }
-  
-  .phase-label {
     font-size: 1.25rem;
   }
   
-  .timer-section {
+  .phase-label {
     font-size: 0.875rem;
+  }
+  
+  .timer-section {
+    font-size: 0.75rem;
   }
 }
 </style>

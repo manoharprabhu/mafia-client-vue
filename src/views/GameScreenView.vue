@@ -74,36 +74,44 @@ async function skipPhase() {
 
 <template>
   <main class="game-screen">
-    <div class="game-header">
-      <WinText :info="gameState?.winner" />
-      <PhaseText :gameState="gameState" />
-      <RoleText :you="gameState?.you" :hhTarget="getHeadhunterTargetName()" />
-      <div
-        v-if="!gameState?.you.hasSkippedDiscussion && gameState?.phase === 'DAY_DISCUSSION'"
-        style="text-align: center"
-      >
-        <Button
-          @click="skipPhase"
-          severity="help"
-          size="large"
-          style="padding: 0.75rem 2rem; border-radius: 12px; font-weight: 600"
-        >
-          ⏩ Vote to Skip Discussion
-        </Button>
-      </div>
-    </div>
-
+    <WinText :info="gameState?.winner" />
+    
     <div class="game-layout">
-      <div class="players-section">
-        <GamePlayersList
-          :players="gameState?.players"
-          :visibleRoles="gameState?.visibleRoles"
-          :phase="gameState?.phase"
-          :voteMap="gameState?.voteMap"
-          :inspectionResults="gameState?.inspectionResults"
-          :hasInspectedAlready="gameState?.hasInspectedAlready"
-          :you="gameState?.you!"
-        />
+      <div class="left-column">
+        <div class="players-section">
+          <GamePlayersList
+            :players="gameState?.players"
+            :visibleRoles="gameState?.visibleRoles"
+            :phase="gameState?.phase"
+            :voteMap="gameState?.voteMap"
+            :inspectionResults="gameState?.inspectionResults"
+            :hasInspectedAlready="gameState?.hasInspectedAlready"
+            :you="gameState?.you!"
+          />
+        </div>
+        
+        <div class="info-sections">
+          <div class="info-card phase-card">
+            <PhaseText :gameState="gameState" />
+            <div
+              v-if="!gameState?.you.hasSkippedDiscussion && gameState?.phase === 'DAY_DISCUSSION'"
+              class="skip-button-wrapper"
+            >
+              <Button
+                @click="skipPhase"
+                severity="help"
+                size="small"
+                style="padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600"
+              >
+                ⏩ Vote to Skip Discussion
+              </Button>
+            </div>
+          </div>
+          
+          <div class="info-card role-card">
+            <RoleText :you="gameState?.you" :hhTarget="getHeadhunterTargetName()" />
+          </div>
+        </div>
       </div>
 
       <div class="chat-section">
@@ -138,40 +146,73 @@ async function skipPhase() {
 <style scoped>
 .game-screen {
   min-height: 100vh;
-  padding: 2rem;
+  padding: 1rem;
   background-color: #efefef;
-}
-
-.game-header {
-  max-width: 1200px;
-  margin: 0 auto 2rem;
 }
 
 .game-layout {
   display: flex;
   flex-direction: row;
-  gap: 2rem;
+  gap: 1.5rem;
   justify-content: center;
   align-items: flex-start;
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
+  height: calc(100vh - 2rem);
+}
+
+.left-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
 }
 
 .players-section {
-  flex: 2;
+  flex: 1;
   display: flex;
   justify-content: center;
+  min-height: 0;
+  overflow: auto;
+}
+
+.info-sections {
+  display: flex;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.info-card {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 0;
+}
+
+.phase-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.skip-button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5rem;
 }
 
 .chat-section {
-  flex: 1;
-  min-width: 320px;
-  max-width: 420px;
+  flex: 0 0 400px;
   background: white;
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   overflow: hidden;
-  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 2rem);
   animation: slideInRight 0.5s ease;
 }
 
@@ -203,10 +244,11 @@ async function skipPhase() {
 }
 
 .scroll-container {
-  height: 400px;
+  flex: 1;
   overflow-y: auto;
   padding: 0;
   background: #f7fafc;
+  min-height: 0;
 }
 
 .scroll-container::-webkit-scrollbar {
@@ -279,6 +321,7 @@ async function skipPhase() {
   padding: 1rem;
   background: white;
   border-top: 2px solid #e2e8f0;
+  flex-shrink: 0;
 }
 
 .chat-input-wrapper {
@@ -325,30 +368,34 @@ async function skipPhase() {
   transform: translateY(0);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1200px) {
   .game-layout {
     flex-direction: column;
-    align-items: center;
+    height: auto;
   }
-
-  .players-section,
+  
   .chat-section {
-    width: 100%;
+    flex: 0 0 auto;
+    height: 500px;
     max-width: 100%;
   }
-
-  .chat-section {
-    max-width: 600px;
+  
+  .info-sections {
+    flex-direction: column;
   }
 }
 
 @media (max-width: 600px) {
   .game-screen {
-    padding: 1rem;
+    padding: 0.5rem;
   }
-
-  .scroll-container {
-    height: 300px;
+  
+  .game-layout {
+    gap: 1rem;
+  }
+  
+  .info-sections {
+    gap: 0.5rem;
   }
 }
 </style>
