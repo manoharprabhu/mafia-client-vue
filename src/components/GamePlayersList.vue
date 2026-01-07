@@ -71,7 +71,7 @@ async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
 <template>
   <div class="grid-container">
     <div v-for="item in players" :key="item.playerId" class="grid-item">
-      <span :class="{ 'strikethrough-text': !item.alive }" style="font-size: 2.5em">{{
+      <span :class="{ 'strikethrough-text': !item.alive }" style="font-size: 1.5em">{{
         item.name
       }}</span>
       <div :hidden="item.playerId !== you?.playerId">
@@ -171,8 +171,8 @@ async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
 <style scoped>
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: repeat(4, 0.2fr);
+  grid-template-rows: repeat(4, 0.2fr);
   gap: 1rem;
   width: 100%;
   max-width: 800px;

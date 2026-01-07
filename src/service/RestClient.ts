@@ -210,21 +210,23 @@ export class RestClient {
     return request.data
   }
 
-  public async sendMessage(
-    lobbyId: string,
-    playerId: string,
-    message: string,
-  ): Promise<void> {
-    await this.client?.post<HTTPResponse<void>>(
-      `${RestClient.root}/game/chat`,
-      {
-        lobbyId,
-        playerId,
-        message,
-      },
-    )
+  public async sendMessage(lobbyId: string, playerId: string, message: string): Promise<void> {
+    await this.client?.post<HTTPResponse<void>>(`${RestClient.root}/game/chat`, {
+      lobbyId,
+      playerId,
+      message,
+    })
   }
+
+  public async skipDiscussion(lobbyId: string, playerId: string): Promise<void> {
+    await this.client?.post<HTTPResponse<void>>(`${RestClient.root}/game/voteskip`, {
+      lobbyId,
+      playerId
+    })
+  }
+
 }
+
 
 export type HTTPResponse<T> = {
   success: boolean
@@ -276,6 +278,7 @@ export type GetGameResponse = {
     name: string
     role: 'VILLAGER' | 'MAFIA' | 'DOCTOR' | 'POLICE' | 'FOOL' | 'HEADHUNTER'
     alive: boolean
+    hasSkippedDiscussion: boolean
   }
   players: [{ playerId: string; name: string; alive: boolean }]
   messages: [{ timestamp: number; message: string; type: number }]

@@ -13,7 +13,6 @@ import Fluid from 'primevue/fluid'
 const gameState = ref<GetGameResponse>()
 const message = ref<string>('')
 const scrollContainerRef = ref<HTMLElement | null>(null)
-
 let timerHandle: number
 onMounted(() => {
   timerHandle = setInterval(async () => {
@@ -67,16 +66,16 @@ async function sendMessage() {
   await RestClient.getInstance().sendMessage(lobbyId, playerId, message.value)
   message.value = ''
 }
+
+async function skipPhase() {
+  const playerId = LocalData.getInstance().getData<string>(LocalData.PLAYERID)!
+  const lobbyId = LocalData.getInstance().getData<string>(LocalData.LOBBYID)!
+  await RestClient.getInstance().skipDiscussion(lobbyId, playerId)
+}
 </script>
 
 <template>
   <main class="game-screen">
-    <div class="game-header">
-      <WinText :info="gameState?.winner" />
-      <PhaseText :gameState="gameState" />
-      <RoleText :you="gameState?.you" :hhTarget="getHeadhunterTargetName()" />
-    </div>
-
     <div class="game-layout">
       <div class="players-section">
         <GamePlayersList
@@ -90,21 +89,31 @@ async function sendMessage() {
         />
       </div>
 
+      <div class="game-header">
+        <WinText :info="gameState?.winner" />
+        <PhaseText :gameState="gameState" />
+        <RoleText :you="gameState?.you" :hhTarget="getHeadhunterTargetName()" />
+        <Button @click="skipPhase" v-if="!gameState?.you.hasSkippedDiscussion && gameState?.phase === 'DAY_DISCUSSION'" severity="help">Vote to skip discussion</Button
+        >
+      </div>
+
       <div class="chat-section">
         <div class="chat-header">Game Log</div>
         <div class="scroll-container" ref="scrollContainerRef">
-          <div v-for="(item, index) in gameState?.messages" :key="index" :class="{'list-item': item.type === 0, 'list-item-chat': item.type === 1}">
+          <div
+            v-for="(item, index) in gameState?.messages"
+            :key="index"
+            :class="{ 'list-item': item.type === 0, 'list-item-chat': item.type === 1 }"
+          >
             <span class="timestamp">{{ formatMsToHHMMsss(item.timestamp) }}</span>
-            <span
-              class="message-text"
-              >{{ item.message }}</span
-            >
+            <span class="message-text">{{ item.message }}</span>
           </div>
         </div>
         <Fluid>
           <InputText type="text" style="width: 100%; height: 100px" v-model="message" />
           <Button @click="sendMessage">Send</Button>
         </Fluid>
+        <br />
       </div>
     </div>
   </main>
@@ -156,7 +165,7 @@ async function sendMessage() {
 }
 
 .scroll-container {
-  height: 500px;
+  height: 300px;
   overflow-y: auto;
   padding: 0;
   background-color: #f8f9fa;
