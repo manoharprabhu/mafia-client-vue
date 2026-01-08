@@ -91,6 +91,7 @@ function closeWinPopup() {
             :voteMap="gameState?.voteMap"
             :inspectionResults="gameState?.inspectionResults"
             :hasInspectedAlready="gameState?.hasInspectedAlready"
+            :godfatherId="gameState?.godFatherId"
             :you="gameState?.you!"
           />
         </div>

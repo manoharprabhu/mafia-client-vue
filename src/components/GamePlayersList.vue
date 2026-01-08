@@ -33,6 +33,7 @@ const props = defineProps<{
     | undefined
   inspectionResults: [{ playerId: string; roleOrientation: 'GOOD' | 'BAD' }] | undefined
   hasInspectedAlready: boolean | undefined
+  godfatherId: string | undefined
 }>()
 
 function getNameById(playerId: string | undefined): string {
@@ -80,7 +81,7 @@ async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
       <div :hidden="item.alive"><Tag severity="danger" value="DEAD" /></div>
       <div v-if="visibleRoles !== undefined && visibleRoles[item.playerId] !== undefined">
         <Tag v-if="visibleRoles[item.playerId] === 'MAFIA'" severity="danger"
-          >{{ visibleRoles[item.playerId] }}
+          >{{ visibleRoles[item.playerId] }}{{item.playerId === godfatherId ? "(godfather)" : ""}}
         </Tag>
         <Tag
           v-if="

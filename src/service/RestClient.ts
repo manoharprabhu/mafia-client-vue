@@ -291,4 +291,5 @@ export type GetGameResponse = {
   yourHeadhunterTarget: string | undefined
   winner: 'VILLAGERS_WIN' | 'MAFIA_WIN' | 'HEADHUNTER_WIN' | 'FOOL_WIN' | 'NONE' | undefined
   hasInspectedAlready: boolean
+  godFatherId: string | undefined
 }
