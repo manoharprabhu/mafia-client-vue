@@ -3,7 +3,7 @@ import Tag from 'primevue/tag'
 import Button from 'primevue/button'
 import { LocalData } from '@/service/LocalData.ts'
 import { RestClient } from '@/service/RestClient.ts'
-import { ref } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 
 const props = defineProps<{
   players: [{ playerId: string; name: string; alive: boolean }] | undefined
@@ -67,109 +67,255 @@ async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
   const lobbyId = LocalData.getInstance().getData<string>(LocalData.LOBBYID)!
   await RestClient.getInstance().policeInspect(lobbyId, sourcePlayerID, targetPlayerID)
 }
+
+const playerRefs = ref<{ [key: string]: HTMLElement }>({})
+const containerRef = ref<HTMLElement | null>(null)
+const arrows = ref<Array<{ x1: number; y1: number; x2: number; y2: number; voterName: string; targetName: string }>>([])
+
+function setPlayerRef(playerId: string, el: any) {
+  if (el) {
+    playerRefs.value[playerId] = el
+  }
+}
+
+function calculateArrows() {
+  if (!props.voteMap || Object.keys(props.voteMap).length === 0 || !containerRef.value) {
+    arrows.value = []
+    return
+  }
+
+  const newArrows: Array<{ x1: number; y1: number; x2: number; y2: number; voterName: string; targetName: string }> = []
+  const containerRect = containerRef.value.getBoundingClientRect()
+
+  for (const [voterId, targetId] of Object.entries(props.voteMap)) {
+    const voterEl = playerRefs.value[voterId]
+    const targetEl = playerRefs.value[targetId]
+
+    if (voterEl && targetEl) {
+      const voterRect = voterEl.getBoundingClientRect()
+      const targetRect = targetEl.getBoundingClientRect()
+
+      const x1 = voterRect.left + voterRect.width / 2 - containerRect.left
+      const y1 = voterRect.top + voterRect.height / 2 - containerRect.top
+      const x2 = targetRect.left + targetRect.width / 2 - containerRect.left
+      const y2 = targetRect.top + targetRect.height / 2 - containerRect.top
+
+      newArrows.push({
+        x1,
+        y1,
+        x2,
+        y2,
+        voterName: getNameById(voterId),
+        targetName: getNameById(targetId)
+      })
+    }
+  }
+
+  arrows.value = newArrows
+}
+
+let resizeObserver: ResizeObserver | null = null
+
+onMounted(() => {
+  nextTick(() => {
+    calculateArrows()
+  })
+
+  if (containerRef.value) {
+    resizeObserver = new ResizeObserver(() => {
+      calculateArrows()
+    })
+    resizeObserver.observe(containerRef.value)
+  }
+
+  window.addEventListener('resize', calculateArrows)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', calculateArrows)
+  if (resizeObserver) {
+    resizeObserver.disconnect()
+  }
+})
+
+watch(() => props.voteMap, () => {
+  nextTick(() => {
+    calculateArrows()
+  })
+}, { deep: true })
+
+watch(() => props.players, () => {
+  nextTick(() => {
+    calculateArrows()
+  })
+}, { deep: true })
 </script>
 
 <template>
-  <div class="grid-container">
-    <div v-for="item in players" :key="item.playerId" class="grid-item">
-      <span :class="{ 'strikethrough-text': !item.alive }" style="font-size: 1.2em">{{
-        item.name
-      }}</span>
-      <div :hidden="item.playerId !== you?.playerId">
-        <Tag severity="success" value="YOU"></Tag>
-      </div>
-      <div :hidden="item.alive"><Tag severity="danger" value="DEAD" /></div>
-      <div v-if="visibleRoles !== undefined && visibleRoles[item.playerId] !== undefined">
-        <Tag v-if="visibleRoles[item.playerId] === 'MAFIA'" severity="danger"
-          >{{ visibleRoles[item.playerId] }}{{item.playerId === godfatherId ? "(godfather)" : ""}}
-        </Tag>
-        <Tag
+  <div class="players-container" ref="containerRef">
+    <svg class="arrows-overlay" v-if="arrows.length > 0">
+      <defs>
+        <marker
+          id="arrowhead"
+          markerWidth="10"
+          markerHeight="10"
+          refX="9"
+          refY="3"
+          orient="auto"
+        >
+          <polygon points="0 0, 10 3, 0 6" fill="#667eea" />
+        </marker>
+      </defs>
+      <g v-for="(arrow, index) in arrows" :key="index">
+        <line
+          :x1="arrow.x1"
+          :y1="arrow.y1"
+          :x2="arrow.x2"
+          :y2="arrow.y2"
+          stroke="#667eea"
+          stroke-width="3"
+          marker-end="url(#arrowhead)"
+          class="vote-arrow"
+        />
+      </g>
+    </svg>
+    <div class="grid-container">
+      <div
+        v-for="item in players"
+        :key="item.playerId"
+        class="grid-item"
+        :ref="(el) => setPlayerRef(item.playerId, el)"
+      >
+        <span :class="{ 'strikethrough-text': !item.alive }" style="font-size: 1.2em">{{
+          item.name
+        }}</span>
+        <div :hidden="item.playerId !== you?.playerId">
+          <Tag severity="success" value="YOU"></Tag>
+        </div>
+        <div :hidden="item.alive"><Tag severity="danger" value="DEAD" /></div>
+        <div v-if="visibleRoles !== undefined && visibleRoles[item.playerId] !== undefined">
+          <Tag v-if="visibleRoles[item.playerId] === 'MAFIA'" severity="danger"
+            >{{ visibleRoles[item.playerId] }}{{item.playerId === godfatherId ? "(godfather)" : ""}}
+          </Tag>
+          <Tag
+            v-if="
+              visibleRoles[item.playerId] === 'HEADHUNTER' || visibleRoles[item.playerId] === 'FOOL'
+            "
+            severity="warn"
+          >
+            {{ visibleRoles[item.playerId] }}
+          </Tag>
+          <Tag
+            v-if="
+              visibleRoles[item.playerId] === 'VILLAGER' ||
+              visibleRoles[item.playerId] === 'POLICE' ||
+              visibleRoles[item.playerId] === 'DOCTOR'
+            "
+            severity="info"
+          >
+            {{ visibleRoles[item.playerId] }}
+          </Tag>
+        </div>
+        <div
           v-if="
-            visibleRoles[item.playerId] === 'HEADHUNTER' || visibleRoles[item.playerId] === 'FOOL'
+            inspectionResults !== undefined &&
+            inspectionResults.find((v) => v.playerId === item.playerId) !== undefined
           "
-          severity="warn"
         >
-          {{ visibleRoles[item.playerId] }}
-        </Tag>
-        <Tag
+          <Tag severity="info">{{
+            inspectionResults.find((v) => v.playerId === item.playerId)?.roleOrientation
+          }}</Tag>
+        </div>
+        <div
+          v-if="you?.alive && phase === 'DAY_VOTING' && item.alive && item.playerId !== you?.playerId"
+        >
+          <Button @click="voteDay(you?.playerId, item.playerId)">Vote</Button>
+        </div>
+        <div
           v-if="
-            visibleRoles[item.playerId] === 'VILLAGER' ||
-            visibleRoles[item.playerId] === 'POLICE' ||
-            visibleRoles[item.playerId] === 'DOCTOR'
+            you?.alive &&
+            phase === 'NIGHT' &&
+            you?.role === 'MAFIA' &&
+            item.alive &&
+            item.playerId !== you.playerId &&
+            visibleRoles !== undefined &&
+            visibleRoles[item.playerId] !== 'MAFIA'
           "
-          severity="info"
         >
-          {{ visibleRoles[item.playerId] }}
-        </Tag>
-      </div>
-      <div
-        v-if="
-          inspectionResults !== undefined &&
-          inspectionResults.find((v) => v.playerId === item.playerId) !== undefined
-        "
-      >
-        <Tag severity="info">{{
-          inspectionResults.find((v) => v.playerId === item.playerId)?.roleOrientation
-        }}</Tag>
-      </div>
-      <div
-        v-if="you?.alive && phase === 'DAY_VOTING' && item.alive && item.playerId !== you?.playerId"
-      >
-        <Button @click="voteDay(you?.playerId, item.playerId)">Vote</Button>
-      </div>
-      <div
-        v-if="
-          you?.alive &&
-          phase === 'NIGHT' &&
-          you?.role === 'MAFIA' &&
-          item.alive &&
-          item.playerId !== you.playerId &&
-          visibleRoles !== undefined &&
-          visibleRoles[item.playerId] !== 'MAFIA'
-        "
-      >
-        <Button @click="voteNight(you.playerId, item.playerId)" severity="danger">Vote</Button>
-      </div>
-      <div
-        v-if="
-          you?.alive &&
-          phase === 'NIGHT' &&
-          you?.role === 'DOCTOR' &&
-          item.alive &&
-          item.playerId !== you.playerId
-        "
-      >
-        <Button @click="voteNightDoctor(you.playerId, item.playerId)" severity="info"
-          >Protect</Button
+          <Button @click="voteNight(you.playerId, item.playerId)" severity="danger">Vote</Button>
+        </div>
+        <div
+          v-if="
+            you?.alive &&
+            phase === 'NIGHT' &&
+            you?.role === 'DOCTOR' &&
+            item.alive &&
+            item.playerId !== you.playerId
+          "
         >
-      </div>
-      <div
-        v-if="
-          you?.alive &&
-          phase === 'NIGHT' &&
-          you?.role === 'POLICE' &&
-          item.alive &&
-          !hasInspectedAlready &&
-          item.playerId !== you.playerId
-        "
-      >
-        <Button @click="policeInspect(you.playerId, item.playerId)" severity="help"
-          >Inspect player</Button
+          <Button @click="voteNightDoctor(you.playerId, item.playerId)" severity="info"
+            >Protect</Button
+          >
+        </div>
+        <div
+          v-if="
+            you?.alive &&
+            phase === 'NIGHT' &&
+            you?.role === 'POLICE' &&
+            item.alive &&
+            !hasInspectedAlready &&
+            item.playerId !== you.playerId
+          "
         >
-      </div>
-      <div
-        v-if="voteMap !== undefined && voteMap[item.playerId] !== undefined"
-        class="vote-performed"
-      >
-        <div>I'm voting {{ getNameById(voteMap[item.playerId]) }}</div>
-      </div>
-      <div v-if="voteMap !== undefined && Object.keys(voteMap).length > 0" class="vote-received">
-        {{ Object.values(voteMap).filter((x) => x === item.playerId).length || '' }}
+          <Button @click="policeInspect(you.playerId, item.playerId)" severity="help"
+            >Inspect player</Button
+          >
+        </div>
+        <div
+          v-if="voteMap !== undefined && voteMap[item.playerId] !== undefined"
+          class="vote-performed"
+        >
+          <div>I'm voting {{ getNameById(voteMap[item.playerId]) }}</div>
+        </div>
+        <div v-if="voteMap !== undefined && Object.keys(voteMap).length > 0" class="vote-received">
+          {{ Object.values(voteMap).filter((x) => x === item.playerId).length || '' }}
+        </div>
       </div>
     </div>
   </div>
 </template>
 <style scoped>
+.players-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.arrows-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.vote-arrow {
+  animation: arrowPulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.9));
+}
+
+@keyframes arrowPulse {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 .grid-container {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -177,6 +323,8 @@ async function policeInspect(sourcePlayerID: string, targetPlayerID: string) {
   width: 100%;
   max-width: 720px;
   padding: 0.8rem;
+  position: relative;
+  z-index: 2;
 }
 
 @media (max-width: 720px) {
