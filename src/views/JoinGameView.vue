@@ -208,7 +208,6 @@ async function join() {
   font-weight: 600;
   text-align: center;
   letter-spacing: 2px;
-  text-transform: uppercase;
 }
 
 .submit-button {
