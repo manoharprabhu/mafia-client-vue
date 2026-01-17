@@ -6,14 +6,12 @@ import { useRouter } from 'vue-router'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
-import IftaLabel from 'primevue/iftalabel'
-import Panel from 'primevue/panel'
 
 const name = ref<string>('')
 const lobbyId = ref<string>('')
 const errorMessage = ref<string>('')
 const isDisabled = ref<boolean>(false)
-const ip = ref(`${window.location.protocol}//${window.location.hostname}:8080`)
+const ip = ref(RestClient.root)
 const router = useRouter()
 
 async function join() {
@@ -52,21 +50,20 @@ async function join() {
       <div class="form-content">
         <div class="input-group">
           <label class="input-label">Server IP Address</label>
-          <InputText 
-            id="ip" 
-            v-model="ip" 
-            type="text" 
+          <InputText
+            id="ip"
+            v-model="ip"
+            type="text"
             class="custom-input"
-            placeholder="http://localhost:8080"
           />
         </div>
 
         <div class="input-group">
           <label class="input-label">Your Name</label>
-          <InputText 
-            id="name" 
-            v-model="name" 
-            type="text" 
+          <InputText
+            id="name"
+            v-model="name"
+            type="text"
             class="custom-input"
             placeholder="Enter your name"
           />
@@ -74,19 +71,19 @@ async function join() {
 
         <div class="input-group">
           <label class="input-label">Lobby ID</label>
-          <InputText 
-            id="lobbyId" 
-            v-model="lobbyId" 
-            type="text" 
+          <InputText
+            id="lobbyId"
+            v-model="lobbyId"
+            type="text"
             class="custom-input lobby-input"
             placeholder="Enter lobby code"
             @keyup.enter="join"
           />
         </div>
 
-        <Button 
-          :disabled="isDisabled || !name || !lobbyId" 
-          @click="join" 
+        <Button
+          :disabled="isDisabled || !name || !lobbyId"
+          @click="join"
           class="submit-button"
           size="large"
         >
@@ -240,9 +237,16 @@ async function join() {
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
 }
 
 .error-message {
@@ -253,11 +257,11 @@ async function join() {
   .form-card {
     border-radius: 0;
   }
-  
+
   .form-header {
     padding: 1.5rem;
   }
-  
+
   .form-title {
     font-size: 1.5rem;
   }

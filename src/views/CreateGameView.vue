@@ -6,12 +6,10 @@ import { useRouter } from 'vue-router'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
-import IftaLabel from 'primevue/iftalabel'
-import Panel from 'primevue/panel'
 const name = ref('')
 const isDisabled = ref(false)
 const errorMessage = ref('')
-const ip = ref(`${window.location.protocol}//${window.location.hostname}:8080`)
+const ip = ref(RestClient.root)
 const router = useRouter()
 
 async function create() {
@@ -58,7 +56,6 @@ onMounted(() => {})
             v-model="ip"
             type="text"
             class="custom-input"
-            placeholder="http://localhost:8080"
           />
         </div>
 

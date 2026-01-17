@@ -2,7 +2,8 @@ import axios, { Axios } from 'axios'
 import { LocalData } from '@/service/LocalData.ts'
 export class RestClient {
   private static instance: RestClient | null = null
-  private static root: string = `${window.location.protocol}//${window.location.hostname}:8080`
+  //public static root: string = `${window.location.protocol}//${window.location.hostname}:8080`
+  public static root: string = `https://mafia-server-rest.onrender.com/`
   private client: Axios | undefined
 
   public static overrideHost(host: string) {
@@ -15,11 +16,6 @@ export class RestClient {
   public static getInstance() {
     if (RestClient.instance) {
       return RestClient.instance
-    }
-
-    const storedIp = LocalData.getInstance().getData<string>(LocalData.IP)
-    if (storedIp !== null) {
-      RestClient.root = storedIp
     }
 
     RestClient.instance = new RestClient()
@@ -221,10 +217,9 @@ export class RestClient {
   public async skipDiscussion(lobbyId: string, playerId: string): Promise<void> {
     await this.client?.post<HTTPResponse<void>>(`${RestClient.root}/game/voteskip`, {
       lobbyId,
-      playerId
+      playerId,
     })
   }
-
 }
 
 
