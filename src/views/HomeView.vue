@@ -1,6 +1,22 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
-import Panel from 'primevue/panel'
+import { LocalData } from '@/service/LocalData.ts'
+import { onMounted } from 'vue'
+import { RestClient } from '@/service/RestClient.ts'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+onMounted(async () => {
+  const playerId = LocalData.getInstance().getData<string>(LocalData.PLAYERID)
+  const lobbyId = LocalData.getInstance().getData<string>(LocalData.LOBBYID)
+  if (playerId && lobbyId) {
+    const gameState = await RestClient.getInstance().getGameState(lobbyId, playerId)
+    if (gameState.success && gameState.data !== null) {
+      await router.push('/gamescreen')
+    }
+  }
+})
+
 </script>
 <template>
   <main class="home-container">

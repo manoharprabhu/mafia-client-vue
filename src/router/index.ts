@@ -31,6 +31,10 @@ const router = createRouter({
       path: '/gamescreen',
       name: 'gamescreen',
       component: GameScreenView,
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: '/',
     }
   ],
 })
