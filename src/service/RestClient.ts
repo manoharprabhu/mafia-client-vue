@@ -3,7 +3,7 @@ import { LocalData } from '@/service/LocalData.ts'
 export class RestClient {
   private static instance: RestClient | null = null
   //public static root: string = `${window.location.protocol}//${window.location.hostname}:8080`
-  public static root: string = `https://mafia-server-rest.onrender.com/`
+  public static root: string = `https://mafia-server-rest.onrender.com`
   private client: Axios | undefined
 
   public static overrideHost(host: string) {
