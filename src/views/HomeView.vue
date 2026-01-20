@@ -2,7 +2,7 @@
 import Button from 'primevue/button'
 import { LocalData } from '@/service/LocalData.ts'
 import { onMounted } from 'vue'
-import { RestClient } from '@/service/RestClient.ts'
+import { RestClient, type GetGameResponse, type HTTPResponse } from '@/service/RestClient.ts'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
@@ -11,12 +11,17 @@ onMounted(async () => {
   const lobbyId = LocalData.getInstance().getData<string>(LocalData.LOBBYID)
   if (playerId && lobbyId) {
     const gameState = await RestClient.getInstance().getGameState(lobbyId, playerId)
-    if (gameState.success && gameState.data !== null) {
+    if (isGameActiveForPlayer(gameState)) {
       await router.push('/gamescreen')
     }
   }
 })
 
+function isGameActiveForPlayer(gameState: HTTPResponse<GetGameResponse>) {
+  return gameState.success &&
+    gameState.data !== null &&
+    gameState.data.phase !== 'WIN'
+}
 </script>
 <template>
   <main class="home-container">

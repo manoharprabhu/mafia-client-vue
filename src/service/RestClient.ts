@@ -125,7 +125,7 @@ export class RestClient {
     return request.data
   }
 
-  public async getGameState(
+  public async getGameState (
     lobbyId: string,
     playerId: string,
   ): Promise<HTTPResponse<GetGameResponse>> {
